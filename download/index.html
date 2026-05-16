@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Downloading ClaudeView…</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #020207; color: #e8ecff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: grid; place-items: center;
+      text-align: center;
+    }
+    .box { padding: 32px; max-width: 460px }
+    h1 { font-size: 22px; font-weight: 700; margin: 0 0 12px; color: #fff }
+    p { font-size: 14px; color: #7b81a8; margin: 0 0 16px; line-height: 1.6 }
+    a { color: #67e8f9; text-decoration: none }
+    a:hover { color: #fff }
+    .spinner {
+      width: 32px; height: 32px; margin: 0 auto 20px;
+      border: 3px solid rgba(168,85,247,0.2);
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <h1 id="title">Finding the latest installer…</h1>
+    <p id="msg">This should only take a second.</p>
+    <p id="fallback" style="display:none">
+      Download not starting?
+      <a id="manual-link" href="https://github.com/thecryptichacker/claudeview/releases/latest">Open releases page</a>
+    </p>
+  </div>
+
+  <script>
+    const GITHUB_OWNER = 'thecryptichacker';
+    const GITHUB_REPO = 'claudeview';
+    const LATEST_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+    const RELEASES_PAGE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+
+    function detectPlatform() {
+      const ua = navigator.userAgent || '';
+      const p = (navigator.userAgentData && navigator.userAgentData.platform) || '';
+      if (/Win/i.test(ua) || /Windows/i.test(p)) return 'windows';
+      if (/Mac/i.test(ua) || /macOS/i.test(p) || /OS X/i.test(ua)) return 'mac';
+      if (/Linux/i.test(ua) || /Linux/i.test(p)) return 'linux';
+      return null;
+    }
+
+    function pickAsset(assets, platform) {
+      if (!Array.isArray(assets) || !platform) return null;
+      const re = { windows: /\.exe$/i, mac: /\.dmg$/i, linux: /\.AppImage$/i }[platform];
+      return assets.find((a) => re.test(a.name)) || null;
+    }
+
+    function showFallback(reason) {
+      document.getElementById('title').textContent = 'Direct download unavailable';
+      document.getElementById('msg').textContent = reason;
+      document.getElementById('fallback').style.display = 'block';
+    }
+
+    (async () => {
+      const platform = detectPlatform();
+      try {
+        const res = await fetch(LATEST_API, { headers: { Accept: 'application/vnd.github+json' } });
+        if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
+        const release = await res.json();
+        const asset = pickAsset(release.assets, platform);
+        if (!asset) {
+          showFallback("Couldn't find a build for your OS. Pick the right file from the releases page.");
+          document.getElementById('manual-link').href = RELEASES_PAGE;
+          return;
+        }
+        document.getElementById('title').textContent = 'Starting download…';
+        document.getElementById('msg').textContent = `${asset.name} · ${release.tag_name || ''}`;
+        document.getElementById('manual-link').href = asset.browser_download_url;
+        document.getElementById('fallback').style.display = 'block';
+        // Use location.replace so the back button doesn't trap users here.
+        window.location.replace(asset.browser_download_url);
+      } catch (err) {
+        showFallback('Network issue reaching GitHub. Use the link below.');
+        document.getElementById('manual-link').href = RELEASES_PAGE;
+      }
+    })();
+  </script>
+</body>
+</html>

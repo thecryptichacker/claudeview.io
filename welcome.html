@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome · ClaudeView</title>
+  <meta name="description" content="Your trial is active. Download ClaudeView to get started." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020207;
+      --panel: #0a0a18;
+      --border: rgba(120, 120, 200, 0.10);
+      --border-strong: rgba(140, 140, 220, 0.28);
+      --text: #e8ecff;
+      --muted: #7b81a8;
+      --cyan: #22d3ee;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --green: #10b981;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.55;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none }
+
+    .bg-layer { position: fixed; inset: 0; z-index: -2; background: #020207 }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 120, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 120, 220, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      opacity: 0.45; pointer-events: none; z-index: -1;
+    }
+    .orb.cyan { width: 480px; height: 480px; background: radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%); top: -100px; left: -100px }
+    .orb.purple { width: 560px; height: 560px; background: radial-gradient(circle, rgba(168,85,247,0.30), transparent 70%); top: 30%; right: -180px }
+    .orb.pink { width: 420px; height: 420px; background: radial-gradient(circle, rgba(236,72,153,0.20), transparent 70%); bottom: 5%; left: 30% }
+
+    .topbar {
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #67e8f9;
+    }
+
+    .container { max-width: 640px; margin: 0 auto; padding: 24px 24px 64px }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px; border-radius: 999px;
+      background: rgba(8,8,20,0.85);
+      border: 1px solid rgba(16,185,129,0.4);
+      font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: #6ee7b7;
+      margin-bottom: 22px;
+    }
+    .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #34d399; box-shadow: 0 0 10px #34d399;
+    }
+    .header { text-align: center; margin-bottom: 32px }
+    h1 {
+      font-size: 40px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15;
+      color: #fff; margin-bottom: 14px;
+    }
+    h1 .grad {
+      background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto }
+
+    .card {
+      padding: 28px 26px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(12,12,28,0.92), rgba(6,6,16,0.85));
+      border: 1px solid var(--border-strong);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 30px 80px -30px rgba(168,85,247,0.4);
+      margin-bottom: 18px;
+    }
+    .download-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .dl-info { flex: 1; min-width: 200px }
+    .dl-title { font-weight: 700; color: #fff; font-size: 15px; margin-bottom: 4px }
+    .dl-meta { font-size: 12px; color: var(--muted) }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 22px; border-radius: 12px;
+      font-weight: 700; font-size: 14px; color: #020207;
+      background: linear-gradient(90deg, #22d3ee 0%, #a855f7 100%);
+      border: none; cursor: pointer;
+      box-shadow: 0 10px 40px -10px rgba(168,85,247,.7);
+      transition: transform .2s, filter .2s;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px); filter: brightness(1.08);
+    }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 18px; border-radius: 10px;
+      font-weight: 600; font-size: 13px; color: #c7cdf5;
+      background: rgba(20,20,40,0.6);
+      border: 1px solid var(--border-strong);
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      transition: background .2s, color .2s;
+    }
+    .btn-secondary:hover { background: rgba(30,30,60,0.7); color: #fff }
+
+    .steps { display: grid; gap: 12px }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(10,10,24,0.5);
+      border: 1px solid var(--border);
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 13px; color: #67e8f9;
+      background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(168,85,247,0.15));
+      border: 1px solid rgba(168,85,247,0.35);
+    }
+    .step-text { font-size: 14px; color: #d4d9f5 }
+    .step-text strong { color: #fff; font-weight: 600 }
+
+    .platform-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .platform-tab {
+      padding: 7px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      background: rgba(10,10,24,0.5);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .platform-tab.active {
+      color: #fff;
+      border-color: rgba(168,85,247,0.5);
+      background: rgba(20,16,40,0.7);
+    }
+
+    .alert {
+      margin-bottom: 14px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 13px; line-height: 1.5;
+    }
+    .alert-info {
+      background: rgba(34,211,238,0.10);
+      border: 1px solid rgba(34,211,238,0.35);
+      color: #a5f3fc;
+    }
+    .alert-warn {
+      background: rgba(245,158,11,0.10);
+      border: 1px solid rgba(245,158,11,0.35);
+      color: #fcd34d;
+    }
+
+    .section-label {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px; font-weight: 600;
+    }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(2,2,7,0.3);
+      border-top-color: #020207;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 30px }
+      .container { padding: 16px 18px 48px }
+      .card { padding: 22px 18px }
+      .download-row { flex-direction: column; align-items: stretch }
+      .btn-primary { width: 100% }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="orb cyan"></div>
+  <div class="orb purple"></div>
+  <div class="orb pink"></div>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">◉</span>
+      <span>ClaudeView</span>
+    </a>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="badge"><span class="dot"></span>Trial Active · 3 Days Free</div>
+      <h1>You're in. <span class="grad">Welcome.</span></h1>
+      <p class="lead" id="lead-text">Your download should begin automatically. If it doesn't, use the button below.</p>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Download for your platform</div>
+
+      <div class="platform-tabs" id="platform-tabs">
+        <div class="platform-tab" data-platform="windows">Windows</div>
+        <div class="platform-tab" data-platform="mac">macOS</div>
+        <div class="platform-tab" data-platform="linux">Linux</div>
+      </div>
+
+      <div id="status-alert" style="display:none"></div>
+
+      <div class="download-row">
+        <div class="dl-info">
+          <div class="dl-title" id="dl-title">ClaudeView</div>
+          <div class="dl-meta" id="dl-meta">Detecting latest version…</div>
+        </div>
+        <a id="download-btn" class="btn-primary" href="#" target="_self" rel="noopener" download>
+          <span id="download-label"><span class="spinner"></span> Loading…</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Next steps</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Install ClaudeView.</strong> Open the installer once it's downloaded and follow the prompts.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>Sign in with the email and password you just created.</strong> The app will detect your active trial automatically — no second checkout.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>Connect Claude Code.</strong> The app walks you through one-time Claude Code login on first launch.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <strong>Open a TradingView chart and start chatting.</strong> Your trial converts to your selected plan after 3 days unless you cancel.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top: 20px">
+      <a class="btn-secondary" href="https://github.com/thecryptichacker/claudeview/releases" target="_blank" rel="noopener">
+        View all releases
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const GITHUB_OWNER = 'thecryptichacker';
+    const GITHUB_REPO = 'claudeview';
+    const LATEST_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+
+    // Detect the user's platform from the User-Agent. macOS Apple Silicon and
+    // Intel both ship under the same universal .dmg.
+    function detectPlatform() {
+      const ua = navigator.userAgent || '';
+      const p = (navigator.userAgentData && navigator.userAgentData.platform) || '';
+      if (/Win/i.test(ua) || /Windows/i.test(p)) return 'windows';
+      if (/Mac/i.test(ua) || /macOS/i.test(p) || /OS X/i.test(ua)) return 'mac';
+      if (/Linux/i.test(ua) || /Linux/i.test(p)) return 'linux';
+      return 'windows';
+    }
+
+    // Match the GitHub release asset to the current platform. electron-builder
+    // produces ClaudeView-Setup-<ver>.exe / ClaudeView-<ver>.dmg / .AppImage.
+    function pickAsset(assets, platform) {
+      if (!Array.isArray(assets)) return null;
+      const exts = {
+        windows: /\.exe$/i,
+        mac: /\.dmg$/i,
+        linux: /\.AppImage$/i,
+      };
+      const re = exts[platform];
+      return assets.find((a) => re.test(a.name)) || null;
+    }
+
+    function fmtSize(bytes) {
+      if (!bytes && bytes !== 0) return '';
+      const mb = bytes / (1024 * 1024);
+      return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`;
+    }
+
+    const tabs = document.querySelectorAll('.platform-tab');
+    const dlBtn = document.getElementById('download-btn');
+    const dlLabel = document.getElementById('download-label');
+    const dlTitle = document.getElementById('dl-title');
+    const dlMeta = document.getElementById('dl-meta');
+    const statusAlert = document.getElementById('status-alert');
+    const leadText = document.getElementById('lead-text');
+
+    function showStatus(msg, kind) {
+      statusAlert.textContent = msg;
+      statusAlert.className = 'alert ' + (kind === 'warn' ? 'alert-warn' : 'alert-info');
+      statusAlert.style.display = 'block';
+    }
+    function hideStatus() { statusAlert.style.display = 'none' }
+
+    function setActiveTab(platform) {
+      tabs.forEach((t) => t.classList.toggle('active', t.dataset.platform === platform));
+    }
+
+    let release = null;
+    let currentPlatform = detectPlatform();
+    let autoDownloadedFor = null;
+
+    async function loadRelease() {
+      try {
+        const res = await fetch(LATEST_API, { headers: { Accept: 'application/vnd.github+json' } });
+        if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
+        release = await res.json();
+      } catch (err) {
+        showStatus(
+          "Couldn't fetch the latest release automatically. You can browse releases directly.",
+          'warn',
+        );
+        dlBtn.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+        dlBtn.removeAttribute('download');
+        dlLabel.textContent = 'Open releases page';
+        dlMeta.textContent = '—';
+        return;
+      }
+      applyPlatform(currentPlatform, { autoDownload: true });
+    }
+
+    function applyPlatform(platform, opts = {}) {
+      currentPlatform = platform;
+      setActiveTab(platform);
+      if (!release) return;
+
+      const asset = pickAsset(release.assets, platform);
+      const version = release.tag_name || release.name || '';
+      const labelName = { windows: 'Windows', mac: 'macOS', linux: 'Linux' }[platform] || platform;
+
+      if (!asset) {
+        dlTitle.textContent = `ClaudeView for ${labelName}`;
+        dlMeta.textContent = `No ${labelName} build in ${version}. Try another platform.`;
+        dlBtn.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+        dlBtn.removeAttribute('download');
+        dlLabel.textContent = 'Open releases page';
+        return;
+      }
+
+      dlTitle.textContent = `ClaudeView for ${labelName}`;
+      dlMeta.textContent = `${version} · ${fmtSize(asset.size)}`;
+      dlBtn.href = asset.browser_download_url;
+      dlBtn.setAttribute('download', asset.name);
+      dlLabel.textContent = `Download ${asset.name}`;
+
+      // Trigger automatic download once per platform selection. Browsers
+      // require this to originate from a script triggered by navigation,
+      // not a user gesture — we use a hidden anchor click.
+      if (opts.autoDownload && autoDownloadedFor !== platform) {
+        autoDownloadedFor = platform;
+        const a = document.createElement('a');
+        a.href = asset.browser_download_url;
+        a.setAttribute('download', asset.name);
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        leadText.textContent = "Your download is starting. If your browser blocked it, click the button below.";
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        applyPlatform(tab.dataset.platform, { autoDownload: false });
+      });
+    });
+
+    setActiveTab(currentPlatform);
+    loadRelease();
+  </script>
+</body>
+</html>

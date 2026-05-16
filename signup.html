@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Start Your Free Trial · ClaudeView</title>
+  <meta name="description" content="Start your free 3-day ClaudeView trial. Strategy-aware AI chart analysis with Claude Opus + TradingView." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root {
+      --bg: #020207;
+      --panel: #0a0a18;
+      --border: rgba(120, 120, 200, 0.10);
+      --border-strong: rgba(140, 140, 220, 0.28);
+      --text: #e8ecff;
+      --muted: #7b81a8;
+      --cyan: #22d3ee;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --green: #10b981;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.55;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none }
+
+    .bg-layer { position: fixed; inset: 0; z-index: -2; background: #020207 }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 120, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 120, 220, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      opacity: 0.45; pointer-events: none; z-index: -1;
+    }
+    .orb.cyan { width: 480px; height: 480px; background: radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%); top: -100px; left: -100px }
+    .orb.purple { width: 560px; height: 560px; background: radial-gradient(circle, rgba(168,85,247,0.30), transparent 70%); top: 30%; right: -180px }
+    .orb.pink { width: 420px; height: 420px; background: radial-gradient(circle, rgba(236,72,153,0.20), transparent 70%); bottom: 5%; left: 30% }
+
+    .topbar {
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #67e8f9;
+    }
+    .back-link {
+      font-size: 13px; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .back-link:hover { color: #fff }
+
+    .container { max-width: 520px; margin: 0 auto; padding: 24px 24px 64px }
+    .header {
+      text-align: center; margin-bottom: 28px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px; border-radius: 999px;
+      background: rgba(8,8,20,0.85);
+      border: 1px solid var(--border-strong);
+      font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; color: #c7cdf5;
+      margin-bottom: 22px;
+    }
+    .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #34d399; box-shadow: 0 0 10px #34d399;
+    }
+    h1 {
+      font-size: 36px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15;
+      color: #fff; margin-bottom: 14px;
+    }
+    h1 .grad {
+      background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead {
+      color: var(--muted); font-size: 15px;
+    }
+
+    .plan-toggle {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 22px;
+    }
+    .plan-option {
+      position: relative;
+      padding: 16px 14px;
+      border-radius: 14px;
+      background: rgba(10,10,24,0.55);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .plan-option.selected {
+      border-color: rgba(168,85,247,0.6);
+      background: rgba(20,16,40,0.7);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.4), 0 10px 30px -15px rgba(168,85,247,0.5);
+    }
+    .plan-option .plan-name {
+      font-size: 13px; font-weight: 700; color: #fff;
+    }
+    .plan-option .plan-price {
+      font-size: 22px; font-weight: 800; margin-top: 4px;
+      background: linear-gradient(90deg, #22d3ee, #a855f7);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .plan-option .plan-period { font-size: 11px; color: var(--muted); margin-top: 2px }
+    .plan-option .plan-tag {
+      position: absolute; top: -8px; right: 10px;
+      font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px;
+      background: linear-gradient(90deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.45);
+      color: #c084fc;
+    }
+
+    .form-card {
+      padding: 28px 26px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(12,12,28,0.92), rgba(6,6,16,0.85));
+      border: 1px solid var(--border-strong);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 30px 80px -30px rgba(168,85,247,0.4);
+    }
+    .field { margin-bottom: 16px }
+    .field label {
+      display: block;
+      font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .field input[type=email],
+    .field input[type=password],
+    .field input[type=text] {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 10px;
+      background: rgba(6,6,16,0.65);
+      border: 1px solid rgba(120,120,200,0.18);
+      color: #fff; font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .field input:focus {
+      border-color: rgba(168,85,247,0.55);
+      background: rgba(10,10,24,0.85);
+    }
+    .field input::placeholder { color: #4a4f70 }
+
+    .stripe-mount {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(6,6,16,0.65);
+      border: 1px solid rgba(120,120,200,0.18);
+      min-height: 50px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 15px 24px; border-radius: 12px;
+      font-weight: 700; font-size: 15px; color: #020207;
+      background: linear-gradient(90deg, #22d3ee 0%, #a855f7 100%);
+      border: none; cursor: pointer;
+      box-shadow: 0 10px 40px -10px rgba(168,85,247,.7);
+      transition: transform .2s, filter .2s, box-shadow .2s;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px); filter: brightness(1.08);
+      box-shadow: 0 14px 50px -10px rgba(168,85,247,.85);
+    }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed }
+
+    .fine {
+      margin-top: 14px; text-align: center;
+      font-size: 12px; color: var(--muted); line-height: 1.6;
+    }
+    .fine a { color: #67e8f9 }
+    .fine a:hover { color: #fff }
+
+    .alert {
+      margin-bottom: 14px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 13px; line-height: 1.5;
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.10);
+      border: 1px solid rgba(239,68,68,0.35);
+      color: #fca5a5;
+    }
+    .alert-info {
+      background: rgba(34,211,238,0.10);
+      border: 1px solid rgba(34,211,238,0.35);
+      color: #a5f3fc;
+    }
+
+    .footer-links {
+      margin-top: 22px; text-align: center;
+      font-size: 13px; color: var(--muted);
+    }
+    .footer-links a { color: #c7cdf5 }
+    .footer-links a:hover { color: #fff }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(2,2,7,0.3);
+      border-top-color: #020207;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 28px }
+      .container { padding: 16px 18px 48px }
+      .form-card { padding: 22px 18px }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="orb cyan"></div>
+  <div class="orb purple"></div>
+  <div class="orb pink"></div>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">◉</span>
+      <span>ClaudeView</span>
+    </a>
+    <a class="back-link" href="/">← Back to home</a>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="badge"><span class="dot"></span>3-Day Free Trial · No charge today</div>
+      <h1>Start your <span class="grad">free trial</span></h1>
+      <p class="lead">Card on file is required. Cancel anytime in one click before the trial ends.</p>
+    </div>
+
+    <div class="plan-toggle">
+      <div class="plan-option selected" data-plan="monthly" id="plan-monthly">
+        <div class="plan-name">Monthly</div>
+        <div class="plan-price">$29</div>
+        <div class="plan-period">/ month after trial</div>
+      </div>
+      <div class="plan-option" data-plan="annual" id="plan-annual">
+        <span class="plan-tag">Save 60%</span>
+        <div class="plan-name">Annual</div>
+        <div class="plan-price">$235.20</div>
+        <div class="plan-period">$19.60/mo · billed yearly</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div id="alert" class="alert alert-error" style="display:none"></div>
+
+      <form id="signup-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" required autocomplete="email" placeholder="you@example.com" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" />
+        </div>
+
+        <div class="field">
+          <label>Card details</label>
+          <div class="stripe-mount" id="payment-element"></div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn-primary" disabled>
+          <span id="submit-label">Loading…</span>
+        </button>
+
+        <p class="fine">
+          Your card won't be charged for 3 days. After that, your selected plan starts automatically.
+          Cancel anytime from your account.
+        </p>
+      </form>
+    </div>
+
+    <p class="footer-links">
+      Already have an account? <a href="/forgot-password.html">Reset password</a>
+    </p>
+  </div>
+
+  <script>
+    // ===== Config =====
+    // Backend URL — Railway production. Override by editing this file.
+    const BACKEND_URL = 'https://claudeview-production.up.railway.app';
+    // Stripe publishable key — paired with the backend's secret key. Safe to
+    // expose in the client. Live key starts with pk_live_.
+    const STRIPE_PK = 'pk_live_51TLBAWHNLywSIfzjWmVUC26g9Asv7BOA6MUV1BwCizBLcrTeBUdacE3fMrlVK06N9iuta5fJs9iCeb0qojxHrqJV00D9wUFcGB';
+
+    // ===== Plan selection =====
+    let selectedPlan = 'monthly';
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('plan') === 'annual') selectedPlan = 'annual';
+    function updatePlanUI() {
+      document.getElementById('plan-monthly').classList.toggle('selected', selectedPlan === 'monthly');
+      document.getElementById('plan-annual').classList.toggle('selected', selectedPlan === 'annual');
+    }
+    updatePlanUI();
+    document.getElementById('plan-monthly').addEventListener('click', () => { selectedPlan = 'monthly'; updatePlanUI(); });
+    document.getElementById('plan-annual').addEventListener('click', () => { selectedPlan = 'annual'; updatePlanUI(); });
+
+    // ===== Stripe setup =====
+    // We use "deferred intent creation" so the Payment Element can render
+    // immediately, before we've created the SetupIntent on the backend.
+    // The SetupIntent is created when the user submits, and confirmSetup()
+    // uses it then. See: stripe.com/docs/payments/accept-a-payment-deferred
+    const stripe = Stripe(STRIPE_PK);
+    const elements = stripe.elements({
+      mode: 'setup',
+      currency: 'usd',
+      paymentMethodTypes: ['card'],
+      appearance: {
+        theme: 'night',
+        variables: {
+          colorPrimary: '#a855f7',
+          colorBackground: '#0a0a18',
+          colorText: '#e8ecff',
+          colorDanger: '#ef4444',
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          borderRadius: '8px',
+        },
+      },
+    });
+    const paymentElement = elements.create('payment', { layout: 'tabs' });
+    paymentElement.mount('#payment-element');
+
+    const submitBtn = document.getElementById('submit-btn');
+    const submitLabel = document.getElementById('submit-label');
+    const alertBox = document.getElementById('alert');
+
+    paymentElement.on('ready', () => {
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Start Free 3-Day Trial';
+    });
+
+    function showError(msg) {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert alert-error';
+      alertBox.style.display = 'block';
+    }
+    function hideError() {
+      alertBox.style.display = 'none';
+    }
+    function setBusy(busy) {
+      submitBtn.disabled = busy;
+      submitLabel.innerHTML = busy ? '<span class="spinner"></span> Starting trial…' : 'Start Free 3-Day Trial';
+    }
+
+    function humanizeServerError(code) {
+      if (code === 'email_in_use') return 'An account with that email already exists. Try signing in instead.';
+      if (code === 'stripe_error') return 'Payment service is temporarily unavailable. Try again in a moment.';
+      if (code === 'lookup_failed') return "Couldn't verify the email address. Try again.";
+      if (code === 'user_create_failed') return "Couldn't create your account. Try again.";
+      if (code === 'no_setup_intent') return "Couldn't initialize your payment. Try again.";
+      return 'Something went wrong. Try again.';
+    }
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !/.+@.+\..+/.test(email)) {
+        showError('Enter a valid email address.');
+        return;
+      }
+      if (password.length < 8) {
+        showError('Password must be at least 8 characters.');
+        return;
+      }
+
+      setBusy(true);
+
+      // Step 1: Validate card details client-side via Stripe.js.
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        showError(submitError.message || 'Check your card details.');
+        setBusy(false);
+        return;
+      }
+
+      // Step 2: Create the user + subscription on the backend; get a
+      // SetupIntent client_secret in return.
+      let signupRes;
+      try {
+        signupRes = await fetch(`${BACKEND_URL}/v1/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, plan: selectedPlan }),
+        });
+      } catch (err) {
+        showError('Network error. Check your connection and try again.');
+        setBusy(false);
+        return;
+      }
+
+      const signupData = await signupRes.json().catch(() => ({}));
+      if (!signupRes.ok) {
+        showError(humanizeServerError(signupData.error));
+        setBusy(false);
+        return;
+      }
+
+      // Step 3: Confirm the SetupIntent with the card the user entered.
+      // redirect: 'if_required' keeps the user on this page unless 3DS
+      // authentication forces a redirect to the issuer's challenge page.
+      const { error: confirmError } = await stripe.confirmSetup({
+        elements,
+        clientSecret: signupData.client_secret,
+        confirmParams: {
+          return_url: `${window.location.origin}/welcome.html?plan=${selectedPlan}`,
+        },
+        redirect: 'if_required',
+      });
+
+      if (confirmError) {
+        showError(confirmError.message || 'Card was declined. Try another payment method.');
+        setBusy(false);
+        return;
+      }
+
+      // No 3DS redirect needed — go to welcome page.
+      window.location.href = `/welcome.html?plan=${selectedPlan}`;
+    });
+  </script>
+</body>
+</html>
