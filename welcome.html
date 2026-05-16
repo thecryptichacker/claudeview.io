@@ -118,7 +118,8 @@
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px); filter: brightness(1.08);
     }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed }
+    .btn-primary:disabled,
+    .btn-primary.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none }
 
     .btn-secondary {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -236,7 +237,6 @@
       <div class="platform-tabs" id="platform-tabs">
         <div class="platform-tab" data-platform="windows">Windows</div>
         <div class="platform-tab" data-platform="mac">macOS</div>
-        <div class="platform-tab" data-platform="linux">Linux</div>
       </div>
 
       <div id="status-alert" style="display:none"></div>
@@ -282,11 +282,6 @@
       </div>
     </div>
 
-    <div style="text-align:center; margin-top: 20px">
-      <a class="btn-secondary" href="https://github.com/thecryptichacker/claudeview/releases" target="_blank" rel="noopener">
-        View all releases
-      </a>
-    </div>
   </div>
 
   <script>
@@ -299,9 +294,7 @@
     function detectPlatform() {
       const ua = navigator.userAgent || '';
       const p = (navigator.userAgentData && navigator.userAgentData.platform) || '';
-      if (/Win/i.test(ua) || /Windows/i.test(p)) return 'windows';
       if (/Mac/i.test(ua) || /macOS/i.test(p) || /OS X/i.test(ua)) return 'mac';
-      if (/Linux/i.test(ua) || /Linux/i.test(p)) return 'linux';
       return 'windows';
     }
 
@@ -312,7 +305,6 @@
       const exts = {
         windows: /\.exe$/i,
         mac: /\.dmg$/i,
-        linux: /\.AppImage$/i,
       };
       const re = exts[platform];
       return assets.find((a) => re.test(a.name)) || null;
@@ -354,12 +346,14 @@
         release = await res.json();
       } catch (err) {
         showStatus(
-          "Couldn't fetch the latest release automatically. You can browse releases directly.",
+          "Couldn't fetch the latest release. Refresh the page to try again.",
           'warn',
         );
-        dlBtn.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+        dlBtn.removeAttribute('href');
         dlBtn.removeAttribute('download');
-        dlLabel.textContent = 'Open releases page';
+        dlBtn.classList.add('disabled');
+        dlBtn.setAttribute('aria-disabled', 'true');
+        dlLabel.textContent = 'Unavailable';
         dlMeta.textContent = '—';
         return;
       }
@@ -378,9 +372,11 @@
       if (!asset) {
         dlTitle.textContent = `ClaudeView for ${labelName}`;
         dlMeta.textContent = `No ${labelName} build in ${version}. Try another platform.`;
-        dlBtn.href = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+        dlBtn.removeAttribute('href');
         dlBtn.removeAttribute('download');
-        dlLabel.textContent = 'Open releases page';
+        dlBtn.classList.add('disabled');
+        dlBtn.setAttribute('aria-disabled', 'true');
+        dlLabel.textContent = 'Unavailable';
         return;
       }
 
@@ -388,6 +384,8 @@
       dlMeta.textContent = `${version} · ${fmtSize(asset.size)}`;
       dlBtn.href = asset.browser_download_url;
       dlBtn.setAttribute('download', asset.name);
+      dlBtn.classList.remove('disabled');
+      dlBtn.removeAttribute('aria-disabled');
       dlLabel.textContent = `Download ${asset.name}`;
 
       // Trigger automatic download once per platform selection. Browsers
