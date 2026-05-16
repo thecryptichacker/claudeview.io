@@ -409,12 +409,13 @@
     </div>
   </div>
 
+  <script src="/config.js"></script>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    const BACKEND_URL = 'https://claudeview-production.up.railway.app';
-    const SUPABASE_URL = 'https://bnsbxtrdcrztajlrwgfs.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuc2J4dHJkY3J6dGFqbHJ3Z2ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzgwMjQsImV4cCI6MjA5NDI1NDAyNH0.x6-5Rmt9ZOIfRpg0A81zndUmu5W8nXFQaNLS3CgNZcU';
+    const BACKEND_URL = window.APP_CONFIG.backendUrl;
+    const SUPABASE_URL = window.APP_CONFIG.supabaseUrl;
+    const SUPABASE_ANON_KEY = window.APP_CONFIG.supabaseAnonKey;
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: { persistSession: true, autoRefreshToken: true },
