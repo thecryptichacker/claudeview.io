@@ -124,6 +124,13 @@
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
     .plan-option .plan-period { font-size: 11px; color: var(--muted); margin-top: 2px }
+    .plan-option .plan-original {
+      display: inline-block; margin-left: 8px;
+      font-size: 14px; font-weight: 600;
+      color: var(--muted); text-decoration: line-through;
+      -webkit-text-fill-color: var(--muted);
+      vertical-align: 4px;
+    }
     .plan-option .plan-tag {
       position: absolute; top: -8px; right: 10px;
       font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
@@ -262,9 +269,10 @@
 
     <div class="plan-toggle">
       <div class="plan-option selected" data-plan="monthly" id="plan-monthly">
+        <span class="plan-tag">40% Off · Launch</span>
         <div class="plan-name">Monthly</div>
-        <div class="plan-price">$29</div>
-        <div class="plan-period">/ month after trial</div>
+        <div class="plan-price">$29<span class="plan-original">$49</span></div>
+        <div class="plan-period">/ month after trial · regular $49</div>
       </div>
       <div class="plan-option" data-plan="annual" id="plan-annual">
         <span class="plan-tag">Save 60%</span>
