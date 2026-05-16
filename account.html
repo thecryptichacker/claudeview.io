@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Account · ClaudeView</title>
+  <meta name="description" content="Manage your ClaudeView account, subscription, and security." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020207;
+      --panel: #0a0a18;
+      --border: rgba(120, 120, 200, 0.10);
+      --border-strong: rgba(140, 140, 220, 0.28);
+      --text: #e8ecff;
+      --muted: #7b81a8;
+      --cyan: #22d3ee;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --green: #10b981;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.55;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none }
+
+    .bg-layer { position: fixed; inset: 0; z-index: -2; background: #020207 }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 120, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 120, 220, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      opacity: 0.40; pointer-events: none; z-index: -1;
+    }
+    .orb.cyan { width: 480px; height: 480px; background: radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%); top: -100px; left: -100px }
+    .orb.purple { width: 560px; height: 560px; background: radial-gradient(circle, rgba(168,85,247,0.30), transparent 70%); top: 30%; right: -180px }
+    .orb.pink { width: 420px; height: 420px; background: radial-gradient(circle, rgba(236,72,153,0.20), transparent 70%); bottom: 5%; left: 30% }
+
+    .topbar {
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 960px; margin: 0 auto;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #67e8f9;
+    }
+    .topbar-actions { display: inline-flex; gap: 10px; align-items: center }
+    .ghost-btn {
+      padding: 9px 16px; border-radius: 10px;
+      font-size: 13px; font-weight: 700;
+      color: #c7cdf5;
+      background: rgba(10,10,24,0.55);
+      border: 1px solid var(--border-strong);
+      cursor: pointer; font-family: inherit;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .ghost-btn:hover { color: #fff; background: rgba(20,16,40,0.7); border-color: rgba(168,85,247,0.45) }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 16px 24px 64px }
+    .header { margin-bottom: 28px }
+    h1 {
+      font-size: 32px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15;
+      color: #fff; margin-bottom: 8px;
+    }
+    h1 .grad {
+      background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .lead { color: var(--muted); font-size: 15px }
+
+    .alert {
+      margin-bottom: 14px;
+      padding: 11px 14px; border-radius: 10px;
+      font-size: 13px; line-height: 1.5;
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.10);
+      border: 1px solid rgba(239,68,68,0.35);
+      color: #fca5a5;
+    }
+    .alert-success {
+      background: rgba(16,185,129,0.10);
+      border: 1px solid rgba(16,185,129,0.35);
+      color: #6ee7b7;
+    }
+
+    .card {
+      padding: 22px 22px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(12,12,28,0.92), rgba(6,6,16,0.85));
+      border: 1px solid var(--border-strong);
+      backdrop-filter: blur(14px);
+      margin-bottom: 18px;
+    }
+    .card-title {
+      font-size: 14px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: #c7cdf5;
+      margin-bottom: 14px;
+    }
+
+    .status-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center }
+    .status-block { display: flex; flex-direction: column; gap: 4px }
+    .status-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted) }
+    .status-value { font-size: 18px; font-weight: 800; color: #fff }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 11px; border-radius: 999px;
+      font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+      width: max-content;
+    }
+    .status-pill.trialing { background: rgba(34,211,238,0.15); border: 1px solid rgba(34,211,238,0.45); color: #67e8f9 }
+    .status-pill.active { background: rgba(16,185,129,0.14); border: 1px solid rgba(16,185,129,0.45); color: #6ee7b7 }
+    .status-pill.past_due { background: rgba(234,179,8,0.14); border: 1px solid rgba(234,179,8,0.45); color: #fde047 }
+    .status-pill.canceled, .status-pill.unpaid, .status-pill.incomplete, .status-pill.none {
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.45); color: #fca5a5;
+    }
+    .status-pill .pulse {
+      width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+      box-shadow: 0 0 0 0 currentColor; animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5) }
+      70% { box-shadow: 0 0 0 6px rgba(255,255,255,0) }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0) }
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px }
+    @media (max-width: 520px) { .grid-2 { grid-template-columns: 1fr } }
+
+    .field { margin-bottom: 14px }
+    .field label {
+      display: block; font-size: 12px; font-weight: 700;
+      color: #c7cdf5; margin-bottom: 6px;
+      letter-spacing: .04em;
+    }
+    .field input {
+      width: 100%; padding: 12px 14px; border-radius: 10px;
+      background: rgba(6,6,16,0.65); border: 1px solid rgba(120,120,200,0.18);
+      color: var(--text); font-size: 14px; font-family: inherit;
+      transition: border-color .2s, background .2s;
+    }
+    .field input:focus { outline: none; border-color: rgba(168,85,247,0.55); background: rgba(10,10,24,0.85) }
+    .field input::placeholder { color: #4a4f70 }
+
+    .btn-primary {
+      width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 13px 22px; border-radius: 11px;
+      font-weight: 700; font-size: 14px; color: #020207;
+      background: linear-gradient(90deg, #22d3ee 0%, #a855f7 100%);
+      border: none; cursor: pointer; font-family: inherit;
+      box-shadow: 0 8px 30px -10px rgba(168,85,247,.7);
+      transition: transform .2s, filter .2s, box-shadow .2s;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08) }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed }
+    .btn-secondary {
+      width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 13px 22px; border-radius: 11px;
+      font-weight: 700; font-size: 14px;
+      color: #c7cdf5; background: rgba(10,10,24,0.55);
+      border: 1px solid var(--border-strong); cursor: pointer; font-family: inherit;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .btn-secondary:hover:not(:disabled) { color: #fff; background: rgba(20,16,40,0.7); border-color: rgba(168,85,247,0.45) }
+    .btn-secondary:disabled { opacity: 0.6; cursor: not-allowed }
+
+    .plan-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px }
+    .plan-option {
+      position: relative; padding: 14px;
+      border-radius: 12px;
+      background: rgba(10,10,24,0.55);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .plan-option.current {
+      border-color: rgba(168,85,247,0.55);
+      background: rgba(20,16,40,0.7);
+    }
+    .plan-option.current::after {
+      content: 'Current'; position: absolute; top: 8px; right: 10px;
+      font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+      color: #c084fc;
+    }
+    .plan-option .plan-name { font-size: 13px; font-weight: 700; color: #fff }
+    .plan-option .plan-price {
+      font-size: 18px; font-weight: 800; margin-top: 4px;
+      background: linear-gradient(90deg, #22d3ee, #a855f7);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .plan-option .plan-period { font-size: 11px; color: var(--muted); margin-top: 2px }
+
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(2,2,7,0.3);
+      border-top-color: #020207;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner.light { border-color: rgba(255,255,255,0.2); border-top-color: #fff }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    .loading-shell {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 60vh; color: var(--muted); gap: 10px; font-size: 14px;
+    }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 26px }
+      .container { padding: 8px 18px 48px }
+      .card { padding: 18px 16px }
+      .status-row { grid-template-columns: 1fr }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="orb cyan"></div>
+  <div class="orb purple"></div>
+  <div class="orb pink"></div>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">◉</span>
+      <span>ClaudeView</span>
+    </a>
+    <div class="topbar-actions">
+      <button type="button" class="ghost-btn" id="signout-btn">Sign out</button>
+    </div>
+  </div>
+
+  <div class="container" id="page">
+    <div class="loading-shell" id="loading">
+      <span class="spinner light"></span>
+      <span>Loading your account…</span>
+    </div>
+
+    <div id="content" style="display:none">
+      <div class="header">
+        <h1>Your <span class="grad">account</span></h1>
+        <p class="lead" id="account-email"></p>
+      </div>
+
+      <div id="alert" class="alert alert-error" style="display:none"></div>
+      <div id="success" class="alert alert-success" style="display:none"></div>
+
+      <!-- Subscription -->
+      <div class="card">
+        <div class="card-title">Subscription</div>
+        <div class="status-row">
+          <div class="status-block">
+            <span class="status-label">Plan</span>
+            <span class="status-value" id="plan-name">—</span>
+            <span class="status-label" id="renewal-label" style="margin-top:8px"></span>
+          </div>
+          <div class="status-block" style="align-items:flex-end">
+            <span class="status-pill none" id="status-pill"><span class="pulse"></span><span id="status-text">—</span></span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <button type="button" class="btn-primary" id="portal-btn">
+            <span id="portal-label">Manage billing</span>
+          </button>
+          <button type="button" class="btn-secondary" id="switch-btn">
+            <span id="switch-label">Switch plan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan switcher (collapsed by default) -->
+      <div class="card" id="switch-card" style="display:none">
+        <div class="card-title">Switch plan</div>
+        <div class="plan-toggle">
+          <div class="plan-option" data-plan="monthly" id="switch-monthly">
+            <div class="plan-name">Monthly</div>
+            <div class="plan-price">$29</div>
+            <div class="plan-period">/ month</div>
+          </div>
+          <div class="plan-option" data-plan="annual" id="switch-annual">
+            <div class="plan-name">Annual</div>
+            <div class="plan-price">$235.20</div>
+            <div class="plan-period">$19.60/mo · billed yearly</div>
+          </div>
+        </div>
+        <p class="lead" style="font-size:12px;margin-top:8px">
+          On a paid plan, you'll get a prorated invoice immediately. On trial, the new price kicks in when the trial ends.
+        </p>
+      </div>
+
+      <!-- Email -->
+      <div class="card">
+        <div class="card-title">Email</div>
+        <form id="email-form">
+          <div class="field">
+            <label for="new-email">New email</label>
+            <input type="email" id="new-email" autocomplete="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="email-current-password">Current password</label>
+            <input type="password" id="email-current-password" autocomplete="current-password" placeholder="Your current password" />
+          </div>
+          <button type="submit" class="btn-secondary" id="email-btn">
+            <span id="email-btn-label">Update email</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Password -->
+      <div class="card">
+        <div class="card-title">Password</div>
+        <form id="password-form">
+          <div class="field">
+            <label for="current-password">Current password</label>
+            <input type="password" id="current-password" autocomplete="current-password" placeholder="Your current password" />
+          </div>
+          <div class="field">
+            <label for="new-password">New password</label>
+            <input type="password" id="new-password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" />
+          </div>
+          <button type="submit" class="btn-secondary" id="password-btn">
+            <span id="password-btn-label">Update password</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const BACKEND_URL = 'https://claudeview-production.up.railway.app';
+    const SUPABASE_URL = 'https://bnsbxtrdcrztajlrwgfs.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuc2J4dHJkY3J6dGFqbHJ3Z2ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzgwMjQsImV4cCI6MjA5NDI1NDAyNH0.x6-5Rmt9ZOIfRpg0A81zndUmu5W8nXFQaNLS3CgNZcU';
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true },
+    });
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.replace('/signup.html?mode=signin');
+    }
+
+    const alertBox = document.getElementById('alert');
+    const successBox = document.getElementById('success');
+    function showError(msg) {
+      successBox.style.display = 'none';
+      alertBox.textContent = msg;
+      alertBox.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function showSuccess(msg) {
+      alertBox.style.display = 'none';
+      successBox.textContent = msg;
+      successBox.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function clearAlerts() {
+      alertBox.style.display = 'none';
+      successBox.style.display = 'none';
+    }
+
+    async function authedFetch(path, init = {}) {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      if (!s) {
+        window.location.replace('/signup.html?mode=signin');
+        throw new Error('not_signed_in');
+      }
+      return fetch(`${BACKEND_URL}${path}`, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init.headers || {}),
+          Authorization: `Bearer ${s.access_token}`,
+        },
+      });
+    }
+
+    function planLabel(plan) {
+      if (plan === 'monthly') return 'Monthly';
+      if (plan === 'annual') return 'Annual';
+      return 'No active plan';
+    }
+    function statusLabel(status) {
+      if (!status) return 'No subscription';
+      return status.replace('_', ' ');
+    }
+    function formatDate(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    let currentMe = null;
+
+    async function loadAccount() {
+      let res;
+      try {
+        res = await authedFetch('/v1/me');
+      } catch (err) {
+        if (err.message === 'not_signed_in') return;
+        showError('Network error. Refresh to try again.');
+        return;
+      }
+      if (res.status === 401) {
+        await supabase.auth.signOut().catch(() => {});
+        window.location.replace('/signup.html?mode=signin');
+        return;
+      }
+      if (!res.ok) {
+        showError("Couldn't load your account. Try refreshing.");
+        return;
+      }
+      const me = await res.json();
+      currentMe = me;
+      renderAccount(me);
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').style.display = '';
+    }
+
+    function renderAccount(me) {
+      document.getElementById('account-email').textContent = me.user?.email || '';
+
+      const sub = me.subscription || null;
+      const status = sub?.status || 'none';
+      const plan = sub?.plan || null;
+
+      document.getElementById('plan-name').textContent = planLabel(plan);
+      const pill = document.getElementById('status-pill');
+      pill.className = `status-pill ${status}`;
+      document.getElementById('status-text').textContent = statusLabel(status);
+
+      const renewalLabel = document.getElementById('renewal-label');
+      if (sub?.current_period_end) {
+        const verb = sub.cancel_at_period_end ? 'Ends' : (status === 'trialing' ? 'Trial ends' : 'Renews');
+        renewalLabel.textContent = `${verb} ${formatDate(sub.current_period_end)}`;
+      } else {
+        renewalLabel.textContent = '';
+      }
+
+      // Highlight the current plan in the switcher.
+      document.getElementById('switch-monthly').classList.toggle('current', plan === 'monthly');
+      document.getElementById('switch-annual').classList.toggle('current', plan === 'annual');
+
+      // Disable billing portal if no subscription.
+      const portalBtn = document.getElementById('portal-btn');
+      const switchBtn = document.getElementById('switch-btn');
+      const hasBilling = !!sub && status !== 'none' && status !== 'incomplete';
+      portalBtn.disabled = !hasBilling;
+      switchBtn.disabled = !hasBilling;
+    }
+
+    // ===== Sign out =====
+    document.getElementById('signout-btn').addEventListener('click', async () => {
+      await supabase.auth.signOut().catch(() => {});
+      window.location.href = '/';
+    });
+
+    // ===== Stripe portal =====
+    document.getElementById('portal-btn').addEventListener('click', async () => {
+      clearAlerts();
+      const btn = document.getElementById('portal-btn');
+      const label = document.getElementById('portal-label');
+      btn.disabled = true;
+      label.innerHTML = '<span class="spinner"></span> Opening…';
+      try {
+        const res = await authedFetch('/v1/billing/portal', { method: 'POST' });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.url) {
+          showError(data.error === 'no_customer' ? 'No billing account found yet.' : "Couldn't open billing portal. Try again.");
+          btn.disabled = false;
+          label.textContent = 'Manage billing';
+          return;
+        }
+        window.location.href = data.url;
+      } catch (err) {
+        showError('Network error. Try again.');
+        btn.disabled = false;
+        label.textContent = 'Manage billing';
+      }
+    });
+
+    // ===== Switch plan =====
+    const switchCard = document.getElementById('switch-card');
+    document.getElementById('switch-btn').addEventListener('click', () => {
+      switchCard.style.display = switchCard.style.display === 'none' ? '' : 'none';
+      if (switchCard.style.display !== 'none') {
+        switchCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    async function doSwitchPlan(plan) {
+      clearAlerts();
+      if (currentMe?.subscription?.plan === plan) {
+        showError(`You're already on the ${plan} plan.`);
+        return;
+      }
+      const target = document.getElementById(`switch-${plan}`);
+      const originalHTML = target.innerHTML;
+      target.innerHTML = '<div style="text-align:center;padding:14px 0"><span class="spinner light"></span></div>';
+      try {
+        const res = await authedFetch('/v1/billing/switch-plan', {
+          method: 'POST',
+          body: JSON.stringify({ plan }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          target.innerHTML = originalHTML;
+          if (data.error === 'already_on_plan') showError(`You're already on the ${plan} plan.`);
+          else if (data.error === 'no_active_subscription') showError('No active subscription to change.');
+          else if (data.error === 'email_not_verified') showError('Please verify your email before changing plans.');
+          else showError("Couldn't switch plan. Try again.");
+          return;
+        }
+        target.innerHTML = originalHTML;
+        showSuccess(`Switched to ${plan} plan.`);
+        await loadAccount();
+        switchCard.style.display = 'none';
+      } catch (err) {
+        target.innerHTML = originalHTML;
+        showError('Network error. Try again.');
+      }
+    }
+    document.getElementById('switch-monthly').addEventListener('click', () => doSwitchPlan('monthly'));
+    document.getElementById('switch-annual').addEventListener('click', () => doSwitchPlan('annual'));
+
+    // ===== Change email =====
+    document.getElementById('email-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAlerts();
+      const newEmail = document.getElementById('new-email').value.trim();
+      const currentPassword = document.getElementById('email-current-password').value;
+      if (!newEmail || !/.+@.+\..+/.test(newEmail)) { showError('Enter a valid email address.'); return; }
+      if (!currentPassword) { showError('Enter your current password.'); return; }
+
+      const btn = document.getElementById('email-btn');
+      const label = document.getElementById('email-btn-label');
+      btn.disabled = true;
+      label.innerHTML = '<span class="spinner"></span> Updating…';
+      try {
+        const res = await authedFetch('/v1/auth/change-email', {
+          method: 'POST',
+          body: JSON.stringify({ new_email: newEmail, current_password: currentPassword }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (data.error === 'invalid_current_password') showError('Incorrect current password.');
+          else if (data.error === 'email_in_use') showError('That email is already in use.');
+          else showError("Couldn't update email. Try again.");
+        } else {
+          showSuccess('Email updated. Use the new email next time you sign in.');
+          document.getElementById('new-email').value = '';
+          document.getElementById('email-current-password').value = '';
+          await loadAccount();
+        }
+      } catch (err) {
+        showError('Network error. Try again.');
+      } finally {
+        btn.disabled = false;
+        label.textContent = 'Update email';
+      }
+    });
+
+    // ===== Change password =====
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAlerts();
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      if (!currentPassword) { showError('Enter your current password.'); return; }
+      if (newPassword.length < 8) { showError('New password must be at least 8 characters.'); return; }
+
+      const btn = document.getElementById('password-btn');
+      const label = document.getElementById('password-btn-label');
+      btn.disabled = true;
+      label.innerHTML = '<span class="spinner"></span> Updating…';
+      try {
+        const res = await authedFetch('/v1/auth/change-password', {
+          method: 'POST',
+          body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (data.error === 'invalid_current_password') showError('Incorrect current password.');
+          else showError("Couldn't update password. Try again.");
+        } else {
+          showSuccess('Password updated.');
+          document.getElementById('current-password').value = '';
+          document.getElementById('new-password').value = '';
+        }
+      } catch (err) {
+        showError('Network error. Try again.');
+      } finally {
+        btn.disabled = false;
+        label.textContent = 'Update password';
+      }
+    });
+
+    await loadAccount();
+  </script>
+</body>
+</html>
