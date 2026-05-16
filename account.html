@@ -541,6 +541,11 @@
       const downloadCard = document.getElementById('download-card');
       if (me.is_subscribed === true) {
         downloadCard.style.display = '';
+        // Mark the detected platform's tab active immediately so the toggle
+        // looks interactive even before the GitHub release fetch resolves.
+        document.querySelectorAll('#dl-platform-tabs .platform-tab').forEach((t) => {
+          t.classList.toggle('active', t.dataset.platform === currentDlPlatform);
+        });
         ensureReleaseLoaded();
       } else {
         downloadCard.style.display = 'none';
