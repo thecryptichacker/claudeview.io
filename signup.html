@@ -205,6 +205,63 @@
       min-height: 50px;
     }
 
+    .promo-row {
+      display: flex; gap: 8px;
+    }
+    .promo-row input {
+      flex: 1;
+      text-transform: uppercase;
+    }
+    .promo-row input::placeholder { text-transform: none }
+    .promo-apply {
+      padding: 0 16px;
+      border-radius: 10px;
+      background: rgba(168,85,247,0.14);
+      border: 1px solid rgba(168,85,247,0.45);
+      color: #c7cdf5; font-weight: 700; font-size: 13px;
+      font-family: inherit; cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      white-space: nowrap;
+    }
+    .promo-apply:hover:not(:disabled) {
+      background: rgba(168,85,247,0.24);
+      color: #fff;
+    }
+    .promo-apply:disabled { opacity: 0.5; cursor: not-allowed }
+    .promo-status {
+      margin-top: 8px; font-size: 12px;
+      display: none;
+    }
+    .promo-status.ok { color: #6ee7b7; display: block }
+    .promo-status.err { color: #fca5a5; display: block }
+
+    .price-summary {
+      margin-top: 4px; margin-bottom: 4px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(10,10,24,0.6);
+      border: 1px solid var(--border);
+    }
+    .price-summary .ps-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 13px; color: var(--muted);
+    }
+    .price-summary .ps-row + .ps-row { margin-top: 6px }
+    .price-summary .ps-row.today {
+      font-size: 14px; color: #fff; font-weight: 700;
+      padding-top: 10px; margin-top: 10px;
+      border-top: 1px dashed rgba(120,120,200,0.18);
+    }
+    .price-summary .ps-row.today .ps-amount {
+      font-size: 18px;
+      background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .price-summary .ps-strike {
+      text-decoration: line-through;
+      color: #4a4f70; margin-right: 6px;
+    }
+
     .btn-primary {
       width: 100%;
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
@@ -325,9 +382,38 @@
           <input type="password" id="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" />
         </div>
 
+        <div class="field" data-signup-only id="confirm-password-field">
+          <label for="confirm-password">Confirm password</label>
+          <input type="password" id="confirm-password" autocomplete="new-password" placeholder="Re-enter your password" />
+        </div>
+
         <div class="field" data-signup-only>
           <label>Card details</label>
           <div class="stripe-mount" id="payment-element"></div>
+        </div>
+
+        <div class="field" data-signup-only id="promo-field">
+          <label for="promo-code">Promo code <span style="text-transform:none;letter-spacing:0;color:#4a4f70">(optional)</span></label>
+          <div class="promo-row">
+            <input type="text" id="promo-code" autocomplete="off" autocapitalize="characters" placeholder="Enter code" />
+            <button type="button" id="promo-apply-btn" class="promo-apply">Apply</button>
+          </div>
+          <div id="promo-status" class="promo-status"></div>
+        </div>
+
+        <div class="price-summary" data-signup-only id="price-summary">
+          <div class="ps-row">
+            <span id="ps-plan-label">Monthly plan</span>
+            <span><span class="ps-strike" id="ps-strike">$49</span><span id="ps-after">$29/mo after trial</span></span>
+          </div>
+          <div class="ps-row">
+            <span>3-day free trial</span>
+            <span style="color:#6ee7b7">Included</span>
+          </div>
+          <div class="ps-row today">
+            <span>Your price today</span>
+            <span class="ps-amount">$0.00</span>
+          </div>
         </div>
 
         <button type="submit" id="submit-btn" class="btn-primary" disabled>
@@ -369,9 +455,47 @@
     let selectedPlan = 'monthly';
     const params = new URLSearchParams(window.location.search);
     if (params.get('plan') === 'annual') selectedPlan = 'annual';
+
+    // Plan pricing — kept in sync with the backend Stripe prices for display only.
+    const PLAN_PRICING = {
+      monthly: { label: 'Monthly plan', price: 29, original: 49, suffix: '/mo after trial' },
+      annual:  { label: 'Annual plan',  price: 235.20, original: 588, suffix: '/yr after trial' },
+    };
+
+    let appliedPromo = null; // { code, percent_off?, amount_off?, display }
+
+    function fmt(n) {
+      return n.toFixed(2).replace(/\.00$/, '');
+    }
+
+    function updatePriceSummary() {
+      const p = PLAN_PRICING[selectedPlan];
+      document.getElementById('ps-plan-label').textContent = p.label;
+      const strike = document.getElementById('ps-strike');
+      const after = document.getElementById('ps-after');
+      let effective = p.price;
+      if (appliedPromo) {
+        if (appliedPromo.percent_off) {
+          effective = +(p.price * (1 - appliedPromo.percent_off / 100)).toFixed(2);
+        } else if (appliedPromo.amount_off) {
+          effective = Math.max(0, +(p.price - appliedPromo.amount_off / 100).toFixed(2));
+        }
+      }
+      if (appliedPromo) {
+        strike.textContent = `$${fmt(p.price)}`;
+        strike.style.display = '';
+        after.textContent = `$${fmt(effective)}${p.suffix}`;
+      } else {
+        strike.textContent = `$${fmt(p.original)}`;
+        strike.style.display = '';
+        after.textContent = `$${fmt(p.price)}${p.suffix}`;
+      }
+    }
+
     function updatePlanUI() {
       document.getElementById('plan-monthly').classList.toggle('selected', selectedPlan === 'monthly');
       document.getElementById('plan-annual').classList.toggle('selected', selectedPlan === 'annual');
+      updatePriceSummary();
     }
     updatePlanUI();
     document.getElementById('plan-monthly').addEventListener('click', () => { selectedPlan = 'monthly'; updatePlanUI(); });
@@ -382,6 +506,10 @@
     const submitLabel = document.getElementById('submit-label');
     const alertBox = document.getElementById('alert');
     const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const promoInput = document.getElementById('promo-code');
+    const promoApplyBtn = document.getElementById('promo-apply-btn');
+    const promoStatus = document.getElementById('promo-status');
     const tabSignup = document.getElementById('tab-signup');
     const tabSignin = document.getElementById('tab-signin');
     const headerBadge = document.getElementById('header-badge');
@@ -389,6 +517,58 @@
     const headerLead = document.getElementById('header-lead');
     const formFine = document.getElementById('form-fine');
     const footerSwitch = document.getElementById('footer-switch');
+
+    function setPromoStatus(kind, text) {
+      promoStatus.className = `promo-status ${kind}`;
+      promoStatus.textContent = text || '';
+    }
+
+    async function applyPromo() {
+      const code = promoInput.value.trim().toUpperCase();
+      if (!code) {
+        appliedPromo = null;
+        setPromoStatus('', '');
+        updatePriceSummary();
+        return;
+      }
+      promoApplyBtn.disabled = true;
+      promoApplyBtn.textContent = 'Checking…';
+      try {
+        const res = await fetch(`${BACKEND_URL}/v1/promo/validate?code=${encodeURIComponent(code)}`);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.valid) {
+          appliedPromo = null;
+          setPromoStatus('err', data.error === 'expired' ? 'This promo code has expired.' : 'Invalid promo code.');
+        } else {
+          appliedPromo = {
+            code,
+            percent_off: data.percent_off || null,
+            amount_off: data.amount_off || null,
+          };
+          const off = data.percent_off ? `${data.percent_off}% off` : `$${(data.amount_off / 100).toFixed(2)} off`;
+          setPromoStatus('ok', `Promo "${code}" applied — ${off} after trial.`);
+        }
+      } catch {
+        appliedPromo = null;
+        setPromoStatus('err', "Couldn't check the promo code. Try again.");
+      } finally {
+        promoApplyBtn.disabled = false;
+        promoApplyBtn.textContent = 'Apply';
+        updatePriceSummary();
+      }
+    }
+
+    promoApplyBtn.addEventListener('click', applyPromo);
+    promoInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyPromo(); }
+    });
+    promoInput.addEventListener('input', () => {
+      if (appliedPromo && promoInput.value.trim().toUpperCase() !== appliedPromo.code) {
+        appliedPromo = null;
+        setPromoStatus('', '');
+        updatePriceSummary();
+      }
+    });
 
     function showError(msg) {
       alertBox.textContent = msg;
@@ -503,6 +683,7 @@
       if (code === 'lookup_failed') return "Couldn't verify the email address. Try again.";
       if (code === 'user_create_failed') return "Couldn't create your account. Try again.";
       if (code === 'no_setup_intent') return "Couldn't initialize your payment. Try again.";
+      if (code === 'invalid_promo_code') return 'The promo code is invalid or expired. Remove it and try again.';
       return 'Something went wrong. Try again.';
     }
 
@@ -531,10 +712,12 @@
       // Step 2: Create user + subscription on backend; receive SetupIntent.
       let signupRes;
       try {
+        const body = { email, password, plan: selectedPlan };
+        if (appliedPromo?.code) body.promo_code = appliedPromo.code;
         signupRes = await fetch(`${BACKEND_URL}/v1/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, plan: selectedPlan }),
+          body: JSON.stringify(body),
         });
       } catch (err) {
         showError('Network error. Check your connection and try again.');
@@ -581,6 +764,11 @@
       }
       if (mode === 'signup' && password.length < 8) {
         showError('Password must be at least 8 characters.');
+        return;
+      }
+      if (mode === 'signup' && password !== confirmPasswordInput.value) {
+        showError("Passwords don't match.");
+        confirmPasswordInput.focus();
         return;
       }
       if (mode === 'signin' && !password) {
