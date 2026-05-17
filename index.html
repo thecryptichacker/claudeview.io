@@ -729,6 +729,13 @@
     .footer-tag {
       font-size: 11px; color: #5a5f85; letter-spacing: .18em; text-transform: uppercase;
     }
+    .footer-disclaimer {
+      max-width: 1140px; margin: 24px auto 0; padding: 0 24px;
+      font-size: 11.5px; color: #5a5f85; line-height: 1.65;
+      border-top: 1px solid rgba(120,120,200,0.06); padding-top: 18px;
+    }
+    .footer-disclaimer p { margin-bottom: 8px }
+    .footer-disclaimer p:last-child { margin-bottom: 0 }
     .footer-links {
       display: flex; align-items: center; gap: 22px; font-size: 13px; color: var(--muted);
     }
@@ -1337,10 +1344,14 @@
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/privacy.html">Privacy</a>
       </div>
       <div class="footer-tag">&copy; 2026 ClaudeView · All rights reserved</div>
+    </div>
+    <div class="footer-disclaimer">
+      <p>ClaudeView is an independent product. It is <strong style="color:#7b81a8">not affiliated with, endorsed by, or sponsored by Anthropic PBC or TradingView, Inc.</strong> "Claude" and "Claude Opus" are trademarks of Anthropic, PBC. "TradingView" is a trademark of TradingView, Inc. References to these companies describe factual interoperability only. You must hold valid, separate subscriptions to Anthropic Claude and TradingView to use ClaudeView.</p>
+      <p>Nothing on this site or produced by the ClaudeView software constitutes financial, investment, tax, or legal advice. Trading involves substantial risk of loss. See our <a href="/terms.html" style="color:#7b81a8;text-decoration:underline">Terms</a> and <a href="/privacy.html" style="color:#7b81a8;text-decoration:underline">Privacy Policy</a> for full details.</p>
     </div>
   </footer>
 

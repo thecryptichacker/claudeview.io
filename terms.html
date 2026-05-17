@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service · ClaudeView</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <meta name="description" content="ClaudeView Terms of Service — subscriptions, trials, payments, acceptable use, and disclaimers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020207;
+      --panel: #0a0a18;
+      --panel-2: #0d0d22;
+      --border: rgba(120, 120, 200, 0.10);
+      --border-strong: rgba(140, 140, 220, 0.28);
+      --text: #e8ecff;
+      --muted: #7b81a8;
+      --cyan: #22d3ee;
+      --purple: #a855f7;
+      --pink: #ec4899;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: #c4b5fd; text-decoration: none; border-bottom: 1px dotted rgba(196,181,253,0.4) }
+    a:hover { color: #67e8f9; border-bottom-color: rgba(103,232,249,0.6) }
+
+    .bg-layer { position: fixed; inset: 0; z-index: -2; background: #020207 }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 120, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 120, 220, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      opacity: 0.4; pointer-events: none; z-index: -1;
+    }
+    .orb.cyan { width: 480px; height: 480px; background: radial-gradient(circle, rgba(34,211,238,0.32), transparent 70%); top: -100px; left: -100px }
+    .orb.purple { width: 560px; height: 560px; background: radial-gradient(circle, rgba(168,85,247,0.28), transparent 70%); top: 40%; right: -180px }
+    .orb.pink { width: 420px; height: 420px; background: radial-gradient(circle, rgba(236,72,153,0.18), transparent 70%); bottom: 5%; left: 30% }
+
+    .topbar {
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff; border: none }
+    .brand:hover { border: none }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #67e8f9;
+    }
+    .top-link { color: var(--muted); font-size: 13.5px; border: none }
+    .top-link:hover { color: var(--text); border: none }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 24px 24px 96px }
+
+    .doc-head { margin-bottom: 36px; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: #c4b5fd; margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #c4b5fd 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      margin-bottom: 14px;
+    }
+    .updated { color: var(--muted); font-size: 13.5px }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(13,13,34,0.6), rgba(10,10,24,0.6));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .panel h2 {
+      font-size: 19px; font-weight: 700; color: #fff;
+      margin-bottom: 12px; letter-spacing: -0.01em;
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .panel h2 .num {
+      font-size: 12px; letter-spacing: .15em; color: #67e8f9;
+      font-weight: 600;
+    }
+    .panel h3 {
+      font-size: 15px; font-weight: 600; color: #e8ecff;
+      margin-top: 18px; margin-bottom: 8px;
+    }
+    .panel p { color: #c8cee8; font-size: 14.5px; margin-bottom: 12px }
+    .panel p:last-child { margin-bottom: 0 }
+    .panel ul { margin: 8px 0 12px 22px; color: #c8cee8; font-size: 14.5px }
+    .panel li { margin-bottom: 6px }
+    .panel strong { color: #fff; font-weight: 600 }
+    .panel .all-caps {
+      text-transform: uppercase; letter-spacing: 0.02em;
+      font-size: 13px; color: #c8cee8;
+    }
+
+    .callout {
+      background: rgba(34,211,238,0.06);
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #b6efff;
+      margin: 14px 0;
+    }
+    .warn {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.28);
+      color: #fde68a;
+    }
+
+    .back {
+      display: inline-block; margin-top: 24px;
+      font-size: 13.5px; color: var(--muted); border: none;
+    }
+    .back:hover { color: #67e8f9; border: none }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 30px }
+      .panel { padding: 22px 20px }
+      .topbar { padding: 18px 20px }
+      .container { padding: 18px 20px 64px }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="orb cyan"></div>
+  <div class="orb purple"></div>
+  <div class="orb pink"></div>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">◉</span>
+      <span>ClaudeView</span>
+    </a>
+    <a class="top-link" href="/">← Back to home</a>
+  </div>
+
+  <div class="container">
+    <div class="doc-head">
+      <span class="eyebrow">Legal</span>
+      <h1>Terms of Service</h1>
+      <div class="updated">Last updated: May 16, 2026</div>
+    </div>
+
+    <div class="panel">
+      <p>These Terms of Service ("Terms") form a binding agreement between you and the independent developer trading as AMI Academy ("we", "us", "the Developer") covering your use of the <strong>claudeview.io</strong> website ("the Website"), your ClaudeView account, and any subscription you purchase ("the Service").</p>
+      <p>By creating an account, starting a trial, or purchasing a subscription, you confirm that you have read, understood, and agreed to these Terms and to our <a href="/privacy.html">Privacy Policy</a>. If you do not agree, do not create an account or make a purchase.</p>
+      <div class="callout">
+        Use of the installed ClaudeView <strong>desktop application</strong> is additionally governed by the Legal Notice and End-User License Agreement bundled with the app. Where these Terms and the bundled Legal Notice both apply to the same subject, the bundled Legal Notice controls for installed-software use.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">01</span> Eligibility</h2>
+      <p>You must be at least <strong>18 years old</strong> and legally able to enter into a contract in your jurisdiction to use the Service. You may not use the Service if you are barred from doing so under the laws of your country or any country in which you are located, including U.S. trade sanctions.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">02</span> Accounts</h2>
+      <p>You are responsible for keeping your login credentials confidential and for everything that happens under your account. You agree to provide accurate information at sign-up and to keep it current.</p>
+      <p>One account is for one person. You may not share, sell, sub-license, or transfer your account or your downloaded copy of the desktop app to anyone else.</p>
+      <p>We may suspend or terminate your account at any time if you violate these Terms, abuse the Service, charge back a legitimate payment, or use the Service in a way that creates legal risk for us or another user.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">03</span> What the Service is — and what it isn't</h2>
+      <p>ClaudeView is a desktop application that you install on your own computer and that interacts with software <em>you already own and operate</em>: a Chromium-based browser, a TradingView account, and the Claude Code CLI with your own Anthropic Claude subscription.</p>
+      <ul>
+        <li>We <strong>do not</strong> provide Claude, an Anthropic subscription, Anthropic API credits, or any AI inference.</li>
+        <li>We <strong>do not</strong> provide TradingView, a TradingView subscription, or any market data.</li>
+        <li>We <strong>do not</strong> place trades, route orders, or connect to any brokerage.</li>
+        <li>We <strong>do not</strong> store your chart data, prompts, conversations, or screenshots on our servers.</li>
+      </ul>
+      <p>You are responsible for separately obtaining and maintaining valid Anthropic and TradingView accounts, and for complying with each provider's terms.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">04</span> Trial, subscription, and renewal</h2>
+
+      <h3>Free trial</h3>
+      <p>New customers may be offered a <strong>3-day free trial</strong>. To start the trial you must enter valid payment details. You will not be charged during the trial.</p>
+
+      <h3>Automatic conversion to paid subscription</h3>
+      <p>If you do not cancel before the trial ends, your subscription <strong>automatically begins</strong> and your payment method is charged the plan price you selected at sign-up. The subscription then renews automatically each billing period (monthly or annual, depending on plan) until you cancel.</p>
+
+      <h3>Cancellation</h3>
+      <p>You may cancel at any time from your account page. Cancellation takes effect at the end of your current billing period. After cancellation you continue to have access until that period ends, and you will not be charged again.</p>
+
+      <h3>Price changes</h3>
+      <p>We may change subscription prices going forward. We will give existing subscribers at least <strong>30 days' notice</strong> by email before any price change applies to them, and you may cancel before the change takes effect.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">05</span> Payments and taxes</h2>
+      <p>Payments are processed by <strong>Stripe</strong> under their own terms. By providing payment details you authorize us, through Stripe, to charge the applicable subscription fee and any taxes due. If a charge fails, we may retry it and may suspend access until payment is received.</p>
+      <p>All fees are exclusive of taxes unless stated otherwise. Where required, Stripe will calculate and collect applicable VAT, GST, or sales tax on our behalf.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">06</span> Refunds</h2>
+      <p>All payments are <strong>final and non-refundable</strong> once a billing period has begun, except where a non-waivable consumer-protection law in your jurisdiction requires otherwise. The free trial period exists so you can evaluate the Service before being charged.</p>
+
+      <div class="callout warn">
+        <strong>EU / UK / EEA consumers:</strong> Digital content delivered immediately is normally subject to a 14-day right of withdrawal. By starting your subscription and downloading the desktop app during that 14-day window, you <strong>expressly consent</strong> to immediate performance and <strong>acknowledge that you lose your right of withdrawal</strong> once download begins (Consumer Rights Directive Art. 16(m)).
+      </div>
+
+      <p>Where a refund is required by law or granted by us as a goodwill gesture, it will be issued to the original payment method.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">07</span> License to use the Service</h2>
+      <p>Subject to your compliance with these Terms and timely payment of fees, we grant you a <strong>limited, non-exclusive, non-transferable, revocable license</strong> to install and use the ClaudeView desktop app, and to access your account on the Website, for your own personal, non-commercial use.</p>
+      <p>You may not:</p>
+      <ul>
+        <li>Resell, sub-license, rent, lease, or redistribute the Service or any part of it;</li>
+        <li>Reverse-engineer, decompile, or disassemble the desktop app except to the extent applicable law expressly allows;</li>
+        <li>Remove, obscure, or alter any proprietary notice, branding, or legal text;</li>
+        <li>Use the Service to build, train, or improve a competing product;</li>
+        <li>Use the Service to violate any law, infringe any third party's rights, or breach any third-party platform's terms (including Anthropic's and TradingView's).</li>
+      </ul>
+      <p>All intellectual property in the Service, other than third-party open-source components used under their respective licenses, remains with the Developer.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">08</span> Acceptable use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Use the Service to attempt to disrupt, attack, overload, or probe the Website, our backend, or our service providers;</li>
+        <li>Share or sell account credentials;</li>
+        <li>Use stolen, fraudulent, or unauthorized payment methods;</li>
+        <li>Use the Service to give regulated investment advice to others;</li>
+        <li>Use the Service in a way that violates Anthropic's or TradingView's terms of service, or any applicable law.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">09</span> Third-party services</h2>
+      <p>The Service depends on third-party platforms — Anthropic Claude, TradingView, your browser, and your operating system — that we do not control and that may change, limit, restrict, or terminate their services at any time. We are <strong>not responsible</strong> for downtime, breakage, account actions, data loss, or other harm caused by those third parties.</p>
+      <p>You are solely responsible for ensuring your use of the Service with any third-party platform complies with that platform's terms. We may modify, limit, or remove integrations with any third-party service at any time.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">10</span> Not financial advice</h2>
+      <p>The Service is a <strong>general-purpose research and automation tool</strong>. We are not a broker, dealer, investment adviser, financial planner, or fiduciary, and we do not provide personalized financial, investment, tax, legal, or accounting advice.</p>
+      <p>Any output produced by the Service — including chart analysis, suggested entry / exit / stop levels, generated Pine Script, briefs, indicator readings, verdicts, confidence scores, or replies from Claude — is:</p>
+      <ul>
+        <li>Generated algorithmically or by a large language model and may contain errors, hallucinations, outdated data, or incorrect calculations;</li>
+        <li><strong>Not a recommendation</strong> to buy, sell, hold, or transact in any security, derivative, cryptocurrency, commodity, or other financial instrument;</li>
+        <li>For <strong>informational and educational purposes only</strong>.</li>
+      </ul>
+      <p>Trading and investing involve substantial risk of loss, up to and including loss of all capital. <strong>You are solely responsible for every trade and financial decision you make while using the Service.</strong> Past performance of any strategy or indicator is not indicative of future results. Consult a qualified, licensed professional before making any financial decision.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">11</span> No warranty</h2>
+      <p class="all-caps">The Service is provided "as is" and "as available", without warranty of any kind, express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, accuracy, non-infringement, uninterrupted operation, or freedom from defects or security vulnerabilities.</p>
+      <p>We make no warranty that the Service will meet your requirements, that its output will be accurate or reliable, that defects will be corrected, or that it will be compatible with your hardware, operating system, browser, or any third-party service at any specific point in time.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">12</span> Limitation of liability</h2>
+      <p class="all-caps">To the maximum extent permitted by applicable law, the Developer shall not be liable for any indirect, incidental, special, consequential, exemplary, or punitive damages; nor for any loss of profits, revenue, trading gains, trading losses, data, goodwill, or business opportunity arising out of or relating to your use of, or inability to use, the Service — even if advised of the possibility of such damages, and whether the claim arises in contract, tort, strict liability, statute, or otherwise.</p>
+      <p>Where applicable law does not permit a complete disclaimer or limitation, our total aggregate liability to you for any claim arising out of these Terms or the Service is limited to the <strong>greater of (a) the amount you paid us in the 12 months preceding the event giving rise to the claim, or (b) USD $50</strong>.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">13</span> Indemnification</h2>
+      <p>You agree to indemnify, defend, and hold harmless the Developer and his service providers from any claim, liability, damage, loss, cost, or expense (including reasonable attorneys' fees) arising out of or relating to: your use of the Service; your violation of these Terms or of any third party's terms (including Anthropic's and TradingView's); any trade, investment, or financial decision you make in connection with the Service; or any claim by a third party that your use of the Service caused them harm.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">14</span> Third-party trademarks</h2>
+      <p>"Anthropic", "Claude", "Claude Code", "Claude Pro", and "Claude Max" are trademarks of Anthropic, PBC. "TradingView" and the TradingView logos are trademarks of TradingView, Inc. We are <strong>not affiliated with, endorsed by, sponsored by, or otherwise connected to Anthropic or TradingView</strong>. References to either company on the Website or in the Service are nominative and used only to describe factual interoperability.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">15</span> Termination</h2>
+      <p>You may stop using the Service at any time by cancelling your subscription and deleting the desktop app. We may suspend or terminate your access to the Service immediately, without refund, if you breach these Terms or create legal or operational risk for us.</p>
+      <p>On termination, the licenses granted to you end. Sections 6 (Refunds), 7 (License — restrictions), 10 (Not financial advice), 11 (No warranty), 12 (Limitation of liability), 13 (Indemnification), and 17–20 survive termination.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">16</span> Changes to these Terms or to the Service</h2>
+      <p>We may change these Terms from time to time. The "Last updated" date at the top reflects the most recent revision. For material changes affecting paying subscribers, we will give at least <strong>30 days' notice</strong> by email. Continued use of the Service after a change takes effect constitutes acceptance.</p>
+      <p>We may also change, suspend, or discontinue any part of the Service at any time. Where this materially reduces the value of a paid subscription, your sole remedy is to cancel and (where applicable) receive a prorated refund of the unused portion of your current billing period.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">17</span> Governing law and disputes</h2>
+      <p>These Terms are governed by the laws of the United States and, where applicable, the state in which the Developer resides, without regard to its conflict-of-laws principles. The U.N. Convention on Contracts for the International Sale of Goods does not apply.</p>
+      <p>You agree to first attempt to resolve any dispute informally by contacting <a href="mailto:support@claudeview.io">support@claudeview.io</a>. If a dispute cannot be resolved within 60 days, either party may pursue it in the courts of the Developer's home jurisdiction, except where mandatory consumer-protection law in your country gives you the right to bring proceedings in your local courts.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">18</span> Export and sanctions</h2>
+      <p>You may not access, download, or use the Service if you are located in, ordinarily resident in, or organized under the laws of a jurisdiction subject to comprehensive U.S. trade sanctions (as of the date above: Cuba, Iran, North Korea, Syria, and the Crimea, Donetsk, and Luhansk regions of Ukraine), or if you appear on a U.S. Specially Designated Nationals (SDN) list or any equivalent restricted-party list.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">19</span> Severability and assignment</h2>
+      <p>If any provision of these Terms is held invalid or unenforceable, the remainder will remain in full force and effect, and the invalid provision will be enforced to the maximum extent permitted. You may not assign or transfer these Terms without our written consent. We may assign these Terms in connection with a merger, acquisition, or sale of the business; you will be notified by email.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">20</span> Entire agreement; contact</h2>
+      <p>These Terms, together with the <a href="/privacy.html">Privacy Policy</a> and the Legal Notice / EULA bundled with the desktop app, constitute the entire agreement between you and the Developer regarding the Service, and supersede all prior agreements or communications on the subject.</p>
+      <p>Questions about these Terms: <a href="mailto:support@claudeview.io">support@claudeview.io</a>.</p>
+    </div>
+
+    <a class="back" href="/">← Back to home</a>
+  </div>
+</body>
+</html>

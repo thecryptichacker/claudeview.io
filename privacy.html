@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy · ClaudeView</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <meta name="description" content="ClaudeView Privacy Policy — what we collect, why, and your rights under GDPR and CCPA." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020207;
+      --panel: #0a0a18;
+      --panel-2: #0d0d22;
+      --border: rgba(120, 120, 200, 0.10);
+      --border-strong: rgba(140, 140, 220, 0.28);
+      --text: #e8ecff;
+      --muted: #7b81a8;
+      --cyan: #22d3ee;
+      --purple: #a855f7;
+      --pink: #ec4899;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      -webkit-font-smoothing: antialiased; line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: #c4b5fd; text-decoration: none; border-bottom: 1px dotted rgba(196,181,253,0.4) }
+    a:hover { color: #67e8f9; border-bottom-color: rgba(103,232,249,0.6) }
+
+    .bg-layer { position: fixed; inset: 0; z-index: -2; background: #020207 }
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 120, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 120, 220, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      opacity: 0.4; pointer-events: none; z-index: -1;
+    }
+    .orb.cyan { width: 480px; height: 480px; background: radial-gradient(circle, rgba(34,211,238,0.32), transparent 70%); top: -100px; left: -100px }
+    .orb.purple { width: 560px; height: 560px; background: radial-gradient(circle, rgba(168,85,247,0.28), transparent 70%); top: 40%; right: -180px }
+    .orb.pink { width: 420px; height: 420px; background: radial-gradient(circle, rgba(236,72,153,0.18), transparent 70%); bottom: 5%; left: 30% }
+
+    .topbar {
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: #fff; border: none }
+    .brand:hover { border: none }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.18));
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #67e8f9;
+    }
+    .top-link { color: var(--muted); font-size: 13.5px; border: none }
+    .top-link:hover { color: var(--text); border: none }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 24px 24px 96px }
+
+    .doc-head { margin-bottom: 36px; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+      color: #c4b5fd; margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #c4b5fd 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      margin-bottom: 14px;
+    }
+    .updated { color: var(--muted); font-size: 13.5px }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(13,13,34,0.6), rgba(10,10,24,0.6));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .panel h2 {
+      font-size: 19px; font-weight: 700; color: #fff;
+      margin-bottom: 12px; letter-spacing: -0.01em;
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .panel h2 .num {
+      font-size: 12px; letter-spacing: .15em; color: #67e8f9;
+      font-weight: 600;
+    }
+    .panel h3 {
+      font-size: 15px; font-weight: 600; color: #e8ecff;
+      margin-top: 18px; margin-bottom: 8px;
+    }
+    .panel p { color: #c8cee8; font-size: 14.5px; margin-bottom: 12px }
+    .panel p:last-child { margin-bottom: 0 }
+    .panel ul { margin: 8px 0 12px 22px; color: #c8cee8; font-size: 14.5px }
+    .panel li { margin-bottom: 6px }
+    .panel strong { color: #fff; font-weight: 600 }
+
+    .callout {
+      background: rgba(34,211,238,0.06);
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #b6efff;
+      margin: 14px 0;
+    }
+
+    .back {
+      display: inline-block; margin-top: 24px;
+      font-size: 13.5px; color: var(--muted); border: none;
+    }
+    .back:hover { color: #67e8f9; border: none }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 30px }
+      .panel { padding: 22px 20px }
+      .topbar { padding: 18px 20px }
+      .container { padding: 18px 20px 64px }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="orb cyan"></div>
+  <div class="orb purple"></div>
+  <div class="orb pink"></div>
+
+  <div class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">◉</span>
+      <span>ClaudeView</span>
+    </a>
+    <a class="top-link" href="/">← Back to home</a>
+  </div>
+
+  <div class="container">
+    <div class="doc-head">
+      <span class="eyebrow">Legal</span>
+      <h1>Privacy Policy</h1>
+      <div class="updated">Last updated: May 16, 2026</div>
+    </div>
+
+    <div class="panel">
+      <p>This Privacy Policy explains what information AMI Academy ("we", "us", "the Developer") collects when you visit <strong>claudeview.io</strong> ("the Website") or create an account to use ClaudeView ("the Service"), how we use that information, who we share it with, and the rights you have over it.</p>
+      <p>By using the Website or the Service you confirm that you have read and understood this Policy. If you do not agree with it, please do not create an account or make a purchase.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">01</span> Who we are</h2>
+      <p>ClaudeView is operated by an independent individual developer ("the Developer") trading as AMI Academy. ClaudeView is the data controller for personal information collected through the Website and Service.</p>
+      <p>For privacy questions, data-rights requests, or any other matter covered by this Policy, contact: <a href="mailto:support@claudeview.io">support@claudeview.io</a>.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">02</span> What we collect</h2>
+
+      <h3>Account information</h3>
+      <p>When you create an account we collect your <strong>email address</strong> and a <strong>hashed password</strong>. Authentication is handled by our service provider Supabase. We never see or store your password in plain text.</p>
+
+      <h3>Subscription and billing information</h3>
+      <p>When you start a trial or pay for a subscription we collect, through our payment processor Stripe:</p>
+      <ul>
+        <li>Your Stripe customer ID and subscription status</li>
+        <li>The plan you selected, your trial end date, and renewal date</li>
+        <li>Any promo or referral code you applied</li>
+      </ul>
+      <p>We <strong>do not</strong> see or store your full card number, CVC, or bank details. Those are handled directly by Stripe under their own <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+
+      <h3>Technical information</h3>
+      <p>Our hosting provider (Railway) and Supabase automatically log standard server data — IP address, timestamp, browser user-agent, and the URL requested — for security, abuse prevention, and debugging. These logs are retained for a short rolling window and are not used for advertising or profiling.</p>
+
+      <h3>What we do <em>not</em> collect</h3>
+      <p>The ClaudeView desktop application runs entirely on your own computer. We <strong>do not</strong> receive, store, or have access to:</p>
+      <ul>
+        <li>Your chart data, watchlists, indicators, or Pine Script</li>
+        <li>Your TradingView credentials, cookies, or session</li>
+        <li>Your Claude conversations, prompts, or Claude Code session</li>
+        <li>Screenshots taken by the desktop app</li>
+        <li>Any trading positions, broker accounts, or financial data</li>
+      </ul>
+      <p>All of that information stays on your local machine. The desktop app communicates only with the Claude Code CLI you installed on your own device, and with your own TradingView browser window. It does not transmit any of that data to us.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">03</span> Why we collect it</h2>
+      <p>We use the information above only for the following purposes:</p>
+      <ul>
+        <li><strong>To provide the Service</strong> — create your account, authenticate you, enable downloads, and check whether your subscription is active</li>
+        <li><strong>To process payments</strong> — pass billing information to Stripe and respond to webhook events about subscription state</li>
+        <li><strong>To support you</strong> — reply to emails you send to <a href="mailto:support@claudeview.io">support@claudeview.io</a></li>
+        <li><strong>To keep the Service secure</strong> — detect abuse, prevent fraud, and investigate technical issues</li>
+        <li><strong>To comply with law</strong> — respond to valid legal requests and meet our tax / accounting obligations</li>
+      </ul>
+      <p>The legal bases under GDPR are: <strong>performance of a contract</strong> (account, billing), <strong>legitimate interest</strong> (security, fraud prevention), and <strong>legal obligation</strong> (tax, lawful requests). We do not rely on consent for any of the above except where required by local law.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">04</span> Who we share it with</h2>
+      <p>We do not sell your personal information. We share it only with the following service providers, strictly for the purposes described above:</p>
+      <ul>
+        <li><strong>Supabase</strong> — authentication and database hosting (<a href="https://supabase.com/privacy" target="_blank" rel="noopener">privacy policy</a>)</li>
+        <li><strong>Stripe</strong> — payment processing, subscription billing, and tax handling (<a href="https://stripe.com/privacy" target="_blank" rel="noopener">privacy policy</a>)</li>
+        <li><strong>Railway</strong> — backend application hosting (<a href="https://railway.com/legal/privacy" target="_blank" rel="noopener">privacy policy</a>)</li>
+        <li><strong>GitHub Pages and Cloudflare</strong> — Website hosting and DNS</li>
+      </ul>
+      <p>We may also disclose information when required by a valid legal process, to protect our rights, or in connection with a sale, merger, or transfer of the business — in which case you will be notified by email.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">05</span> International transfers</h2>
+      <p>Our service providers are located primarily in the United States. If you access the Service from outside the United States, your information will be transferred to and processed in the U.S. and other countries where our providers operate. These countries may have data-protection laws that differ from those of your country of residence. Where required, we rely on the providers' standard contractual clauses and adequacy mechanisms for these transfers.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">06</span> How long we keep it</h2>
+      <ul>
+        <li><strong>Account data</strong> — for as long as your account exists, plus up to 90 days after deletion to handle disputes and chargebacks.</li>
+        <li><strong>Billing records</strong> — retained by Stripe and by us for as long as required by tax and accounting law in our jurisdiction (typically 7 years).</li>
+        <li><strong>Server logs</strong> — typically 30 days, longer if needed to investigate a security incident.</li>
+        <li><strong>Support emails</strong> — for as long as reasonably needed to maintain a record of the conversation.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">07</span> Your rights</h2>
+      <p>Depending on where you live, you may have some or all of the following rights over the personal information we hold about you:</p>
+      <ul>
+        <li><strong>Access</strong> — request a copy of what we hold</li>
+        <li><strong>Correction</strong> — ask us to fix data that is wrong or incomplete</li>
+        <li><strong>Deletion</strong> — ask us to delete your account and associated data</li>
+        <li><strong>Portability</strong> — receive your data in a structured, machine-readable format</li>
+        <li><strong>Restriction</strong> or <strong>objection</strong> to certain processing</li>
+        <li><strong>Withdrawal of consent</strong> where processing is based on consent</li>
+        <li><strong>Complaint</strong> to your local data-protection authority</li>
+      </ul>
+      <p>To exercise any of these rights, email <a href="mailto:support@claudeview.io">support@claudeview.io</a> from the address on your account. We will respond within 30 days. We may need to verify your identity before fulfilling certain requests.</p>
+
+      <div class="callout">
+        <strong>California residents (CCPA / CPRA):</strong> You have the right to know what categories of personal information we collect, to request deletion, to correct inaccurate information, and to opt out of any "sale" or "sharing" of personal information. We do not sell or share personal information for cross-context behavioral advertising. To exercise your rights, email <a href="mailto:support@claudeview.io">support@claudeview.io</a>.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">08</span> Cookies and tracking</h2>
+      <p>The Website uses only the cookies and local-storage entries that are strictly necessary to log you in and remember your session. We do not use third-party analytics, advertising, or cross-site tracking cookies. Stripe may set its own cookies when you reach the checkout page; those are governed by Stripe's privacy policy.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">09</span> Children</h2>
+      <p>The Service is not directed to, and not intended for, anyone under <strong>18 years of age</strong>. We do not knowingly collect personal information from children. If you believe a child has provided us with information, contact <a href="mailto:support@claudeview.io">support@claudeview.io</a> and we will delete it.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">10</span> Security</h2>
+      <p>We use industry-standard measures to protect your information, including TLS encryption in transit, hashed passwords at rest, and access controls on our database. No system is perfectly secure; we cannot guarantee absolute security. If we become aware of a breach affecting your personal information, we will notify you as required by law.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">11</span> Third-party services used <em>inside</em> the desktop app</h2>
+      <p>The ClaudeView desktop app interacts directly, from your machine, with:</p>
+      <ul>
+        <li><strong>Anthropic Claude</strong> (via the Claude Code CLI installed on your computer) — governed by <a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">Anthropic's Privacy Policy</a></li>
+        <li><strong>TradingView</strong> (via a Chromium browser window you control) — governed by <a href="https://www.tradingview.com/policies/" target="_blank" rel="noopener">TradingView's policies</a></li>
+      </ul>
+      <p>We have no access to these interactions and do not control how those companies handle data. Please review their policies separately.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">12</span> Changes to this Policy</h2>
+      <p>We may update this Policy from time to time. The "Last updated" date at the top reflects the most recent revision. If we make a material change we will notify active subscribers by email. Continued use of the Service after an update constitutes acceptance of the revised Policy.</p>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">13</span> Contact</h2>
+      <p>Questions, requests, or complaints about this Policy:</p>
+      <p><a href="mailto:support@claudeview.io">support@claudeview.io</a></p>
+    </div>
+
+    <a class="back" href="/">← Back to home</a>
+  </div>
+</body>
+</html>
