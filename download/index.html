@@ -44,9 +44,11 @@
 
   <script>
     const GITHUB_OWNER = 'thecryptichacker';
-    const GITHUB_REPO = 'claudeview-releases';
-    const LATEST_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
-    const RELEASES_PAGE = `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+    const WIN_REPO = 'claudeview-releases';
+    const MAC_REPO = 'claudeview';
+    const MAC_TAG_PREFIX = 'mac-v';
+    const WIN_FALLBACK_PAGE = `https://github.com/${GITHUB_OWNER}/${WIN_REPO}/releases/latest`;
+    const MAC_FALLBACK_PAGE = `https://github.com/${GITHUB_OWNER}/${MAC_REPO}/releases`;
 
     function detectPlatform() {
       const ua = navigator.userAgent || '';
@@ -57,28 +59,45 @@
       return null;
     }
 
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
+      return res.json();
+    }
+
+    async function fetchReleaseForPlatform(platform) {
+      if (platform === 'mac') {
+        const list = await fetchJson(`https://api.github.com/repos/${GITHUB_OWNER}/${MAC_REPO}/releases?per_page=30`);
+        return list.find((r) => !r.draft && !r.prerelease && (r.tag_name || '').startsWith(MAC_TAG_PREFIX)) || null;
+      }
+      return fetchJson(`https://api.github.com/repos/${GITHUB_OWNER}/${WIN_REPO}/releases/latest`);
+    }
+
     function pickAsset(assets, platform) {
       if (!Array.isArray(assets) || !platform) return null;
       const re = { windows: /\.exe$/i, mac: /\.dmg$/i, linux: /\.AppImage$/i }[platform];
       return assets.find((a) => re.test(a.name)) || null;
     }
 
-    function showFallback(reason) {
+    function showFallback(reason, fallbackUrl) {
       document.getElementById('title').textContent = 'Direct download unavailable';
       document.getElementById('msg').textContent = reason;
+      document.getElementById('manual-link').href = fallbackUrl;
       document.getElementById('fallback').style.display = 'block';
     }
 
     (async () => {
       const platform = detectPlatform();
+      const fallbackUrl = platform === 'mac' ? MAC_FALLBACK_PAGE : WIN_FALLBACK_PAGE;
       try {
-        const res = await fetch(LATEST_API, { headers: { Accept: 'application/vnd.github+json' } });
-        if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
-        const release = await res.json();
+        const release = await fetchReleaseForPlatform(platform);
+        if (!release) {
+          showFallback("Couldn't find a build for your OS. Pick the right file from the releases page.", fallbackUrl);
+          return;
+        }
         const asset = pickAsset(release.assets, platform);
         if (!asset) {
-          showFallback("Couldn't find a build for your OS. Pick the right file from the releases page.");
-          document.getElementById('manual-link').href = RELEASES_PAGE;
+          showFallback("Couldn't find a build for your OS. Pick the right file from the releases page.", fallbackUrl);
           return;
         }
         document.getElementById('title').textContent = 'Starting download…';
@@ -88,8 +107,7 @@
         // Use location.replace so the back button doesn't trap users here.
         window.location.replace(asset.browser_download_url);
       } catch (err) {
-        showFallback('Network issue reaching GitHub. Use the link below.');
-        document.getElementById('manual-link').href = RELEASES_PAGE;
+        showFallback('Network issue reaching GitHub. Use the link below.', fallbackUrl);
       }
     })();
   </script>
