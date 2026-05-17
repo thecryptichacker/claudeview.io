@@ -562,12 +562,8 @@
 
     // ===== Download (gated by is_subscribed) =====
     const GITHUB_OWNER = 'thecryptichacker';
-    // Windows installers live in the dedicated releases repo; the Mac DMG is
-    // published from the main source repo's GitHub Actions build under tags
-    // prefixed with `mac-v`. Each platform is fetched from its own repo.
-    const WIN_REPO = 'claudeview-releases';
-    const MAC_REPO = 'claudeview';
-    const MAC_TAG_PREFIX = 'mac-v';
+    const GITHUB_REPO = 'claudeview-releases';
+    const LATEST_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
 
     function detectPlatform() {
       const ua = navigator.userAgent || '';
@@ -587,20 +583,7 @@
       return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`;
     }
 
-    async function fetchJson(url) {
-      const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } });
-      if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
-      return res.json();
-    }
-    async function fetchLatestWindowsRelease() {
-      return fetchJson(`https://api.github.com/repos/${GITHUB_OWNER}/${WIN_REPO}/releases/latest`);
-    }
-    async function fetchLatestMacRelease() {
-      const list = await fetchJson(`https://api.github.com/repos/${GITHUB_OWNER}/${MAC_REPO}/releases?per_page=30`);
-      return list.find((r) => !r.draft && !r.prerelease && (r.tag_name || '').startsWith(MAC_TAG_PREFIX)) || null;
-    }
-
-    const releaseCache = { windows: null, mac: null };
+    let releaseCache = null;
     let releaseLoading = null;
     let currentDlPlatform = detectPlatform();
 
@@ -628,18 +611,15 @@
       const title = document.getElementById('dl-title');
       const meta = document.getElementById('dl-meta');
       const labelName = platform === 'mac' ? 'macOS' : 'Windows';
-      const release = releaseCache[platform];
 
-      if (!release) {
+      if (!releaseCache) {
         title.textContent = `ClaudeView for ${labelName}`;
         meta.textContent = 'Detecting latest version…';
         return;
       }
 
-      const asset = pickAsset(release.assets, platform);
-      const rawVersion = release.tag_name || release.name || '';
-      // Mac tags are `mac-v2.1.7` — strip the prefix so the badge reads `v2.1.7`.
-      const version = platform === 'mac' ? rawVersion.replace(/^mac-/, '') : rawVersion;
+      const asset = pickAsset(releaseCache.assets, platform);
+      const version = releaseCache.tag_name || releaseCache.name || '';
 
       if (!asset) {
         title.textContent = `ClaudeView for ${labelName}`;
@@ -662,20 +642,13 @@
     }
 
     async function ensureReleaseLoaded() {
-      if (releaseCache.windows || releaseCache.mac) { applyDlPlatform(currentDlPlatform); return; }
+      if (releaseCache) { applyDlPlatform(currentDlPlatform); return; }
       if (releaseLoading) return releaseLoading;
       releaseLoading = (async () => {
         try {
-          const [winResult, macResult] = await Promise.allSettled([
-            fetchLatestWindowsRelease(),
-            fetchLatestMacRelease(),
-          ]);
-          if (winResult.status === 'fulfilled') releaseCache.windows = winResult.value;
-          if (macResult.status === 'fulfilled') releaseCache.mac = macResult.value;
-
-          if (!releaseCache.windows && !releaseCache.mac) {
-            throw new Error('Both Windows and Mac releases failed to load');
-          }
+          const res = await fetch(LATEST_API, { headers: { Accept: 'application/vnd.github+json' } });
+          if (!res.ok) throw new Error(`GitHub API returned ${res.status}`);
+          releaseCache = await res.json();
           setDlStatus('', '');
           applyDlPlatform(currentDlPlatform);
         } catch (err) {
