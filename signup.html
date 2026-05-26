@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Start Your Free Trial · ClaudeView</title>
+  <title>Try ClaudeView for $1 · ClaudeView</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
-  <meta name="description" content="Start your free 3-day ClaudeView trial. Strategy-aware AI chart analysis with Claude Opus + TradingView." />
+  <meta name="description" content="3 days of ClaudeView for $1, then $29/mo. Strategy-aware AI chart analysis with Claude Opus + TradingView. Cancel anytime." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -345,9 +345,9 @@
 
   <div class="container">
     <div class="header">
-      <div class="badge" id="header-badge"><span class="dot"></span>3-Day Free Trial · $1 refundable verification</div>
-      <h1 id="header-title">Start your <span class="grad">free trial</span></h1>
-      <p class="lead" id="header-lead">A $1 hold verifies your card and is refunded immediately. Cancel anytime in one click before the trial ends.</p>
+      <div class="badge" id="header-badge"><span class="dot"></span>3 Days for $1 · Then $29/mo</div>
+      <h1 id="header-title">Try ClaudeView for <span class="grad">$1</span></h1>
+      <p class="lead" id="header-lead">Get full access for 3 days. Continue at $29/month after, or cancel anytime in one click before the trial ends.</p>
     </div>
 
     <div class="auth-tabs" role="tablist">
@@ -409,16 +409,12 @@
             <span><span class="ps-strike" id="ps-strike">$49</span><span id="ps-after">$29/mo after trial</span></span>
           </div>
           <div class="ps-row">
-            <span>3-day free trial</span>
-            <span style="color:#6ee7b7">Included</span>
-          </div>
-          <div class="ps-row">
-            <span>Card verification</span>
-            <span style="color:#6ee7b7">$1.00 — refunded immediately</span>
+            <span>3-day trial</span>
+            <span style="color:#6ee7b7">Full access</span>
           </div>
           <div class="ps-row today">
             <span>Your price today</span>
-            <span class="ps-amount">$0.00</span>
+            <span class="ps-amount">$1.00</span>
           </div>
         </div>
 
@@ -433,8 +429,8 @@
         </button>
 
         <p class="fine" id="form-fine">
-          We charge $1.00 to verify your card and refund it immediately. Your selected plan starts after the 3-day free trial.
-          Cancel anytime from your account.
+          $1.00 today gets you 3 days of full access. Your selected plan ($29/mo or $235.20/yr) begins on day 4 unless you cancel.
+          Cancel anytime in one click from your account.
         </p>
       </form>
     </div>
@@ -614,17 +610,17 @@
 
       if (isSignup) {
         headerBadge.style.display = '';
-        headerBadge.innerHTML = '<span class="dot"></span>3-Day Free Trial · No charge today';
-        headerTitle.innerHTML = 'Start your <span class="grad">free trial</span>';
-        headerLead.textContent = 'Card on file is required. Cancel anytime in one click before the trial ends.';
-        formFine.textContent = "Your card won't be charged for 3 days. After that, your selected plan starts automatically. Cancel anytime from your account.";
+        headerBadge.innerHTML = '<span class="dot"></span>3 Days for $1 · Then $29/mo';
+        headerTitle.innerHTML = 'Try ClaudeView for <span class="grad">$1</span>';
+        headerLead.textContent = 'Get full access for 3 days. Continue at $29/month after, or cancel anytime in one click before the trial ends.';
+        formFine.textContent = "$1.00 today gets you 3 days of full access. Your selected plan ($29/mo or $235.20/yr) begins on day 4 unless you cancel. Cancel anytime in one click from your account.";
         passwordInput.setAttribute('autocomplete', 'new-password');
         passwordInput.setAttribute('minlength', '8');
         passwordInput.setAttribute('placeholder', 'At least 8 characters');
         footerSwitch.textContent = 'Sign in';
         if (stripeReady) {
           submitBtn.disabled = false;
-          submitLabel.textContent = 'Start Free 3-Day Trial';
+          submitLabel.textContent = 'Start 3 Days for $1';
         } else {
           submitBtn.disabled = true;
           submitLabel.textContent = 'Loading…';
@@ -688,13 +684,13 @@
       stripeReady = true;
       if (mode === 'signup') {
         submitBtn.disabled = false;
-        submitLabel.textContent = 'Start Free 3-Day Trial';
+        submitLabel.textContent = 'Start 3 Days for $1';
       }
     });
 
     function setBusy(busy) {
       submitBtn.disabled = busy;
-      const idle = mode === 'signup' ? 'Start Free 3-Day Trial' : 'Sign In';
+      const idle = mode === 'signup' ? 'Start 3 Days for $1' : 'Sign In';
       const busyLabel = mode === 'signup' ? 'Starting trial…' : 'Signing in…';
       submitLabel.innerHTML = busy ? `<span class="spinner"></span> ${busyLabel}` : idle;
     }
