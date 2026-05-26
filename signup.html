@@ -345,9 +345,9 @@
 
   <div class="container">
     <div class="header">
-      <div class="badge" id="header-badge"><span class="dot"></span>3-Day Free Trial · No charge today</div>
+      <div class="badge" id="header-badge"><span class="dot"></span>3-Day Free Trial · $1 refundable verification</div>
       <h1 id="header-title">Start your <span class="grad">free trial</span></h1>
-      <p class="lead" id="header-lead">Card on file is required. Cancel anytime in one click before the trial ends.</p>
+      <p class="lead" id="header-lead">A $1 hold verifies your card and is refunded immediately. Cancel anytime in one click before the trial ends.</p>
     </div>
 
     <div class="auth-tabs" role="tablist">
@@ -412,6 +412,10 @@
             <span>3-day free trial</span>
             <span style="color:#6ee7b7">Included</span>
           </div>
+          <div class="ps-row">
+            <span>Card verification</span>
+            <span style="color:#6ee7b7">$1.00 — refunded immediately</span>
+          </div>
           <div class="ps-row today">
             <span>Your price today</span>
             <span class="ps-amount">$0.00</span>
@@ -429,7 +433,7 @@
         </button>
 
         <p class="fine" id="form-fine">
-          Your card won't be charged for 3 days. After that, your selected plan starts automatically.
+          We charge $1.00 to verify your card and refund it immediately. Your selected plan starts after the 3-day free trial.
           Cancel anytime from your account.
         </p>
       </form>
@@ -654,11 +658,15 @@
     else applyMode();
 
     // ===== Stripe setup =====
-    // Deferred-intent setup: Payment Element mounts immediately, SetupIntent
-    // is created on submit. See stripe.com/docs/payments/accept-a-payment-deferred.
+    // Deferred-intent payment: Payment Element mounts immediately, a $1
+    // PaymentIntent is created on submit (server). The $1 actually charges —
+    // it's the trust gate against prepaid / virtual / zero-balance cards that
+    // would otherwise pass a SetupIntent. /v1/auth/finalize-signup refunds it
+    // immediately after creating the subscription.
     const stripe = Stripe(STRIPE_PK);
     const elements = stripe.elements({
-      mode: 'setup',
+      mode: 'payment',
+      amount: 100,
       currency: 'usd',
       paymentMethodTypes: ['card'],
       appearance: {
@@ -696,8 +704,9 @@
       if (code === 'stripe_error') return 'Payment service is temporarily unavailable. Try again in a moment.';
       if (code === 'lookup_failed') return "Couldn't verify the email address. Try again.";
       if (code === 'user_create_failed') return "Couldn't create your account. Try again.";
-      if (code === 'no_setup_intent') return "Couldn't initialize your payment. Try again.";
       if (code === 'invalid_promo_code') return 'The promo code is invalid or expired. Remove it and try again.';
+      if (code === 'payment_not_succeeded') return 'Card verification did not complete. Try again with a different card.';
+      if (code === 'payment_intent_not_found') return "Couldn't find your verification charge. Refresh and try again.";
       return 'Something went wrong. Try again.';
     }
 
@@ -723,7 +732,7 @@
         return;
       }
 
-      // Step 2: Create user + subscription on backend; receive SetupIntent.
+      // Step 2: Create user + $1 PaymentIntent on backend.
       let signupRes;
       try {
         const body = { email, password, plan: selectedPlan };
@@ -746,8 +755,9 @@
         return;
       }
 
-      // Step 3: Confirm SetupIntent with the entered card.
-      const { error: confirmError } = await stripe.confirmSetup({
+      // Step 3: Confirm the $1 PaymentIntent. This is the trust gate — prepaid
+      // / virtual / zero-balance cards that pass SetupIntent fail here.
+      const { error: confirmError } = await stripe.confirmPayment({
         elements,
         clientSecret: signupData.client_secret,
         confirmParams: {
@@ -758,6 +768,27 @@
 
       if (confirmError) {
         showError(confirmError.message || 'Card was declined. Try another payment method.');
+        setBusy(false);
+        return;
+      }
+
+      // Step 4: Finalize — server creates the subscription and refunds the $1.
+      // If this call fails (e.g. user offline), the payment_intent.succeeded
+      // webhook is a fallback that completes the same work server-side.
+      try {
+        const finalizeRes = await fetch(`${BACKEND_URL}/v1/auth/finalize-signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payment_intent_id: signupData.payment_intent_id }),
+        });
+        if (!finalizeRes.ok) {
+          const finalizeData = await finalizeRes.json().catch(() => ({}));
+          showError(humanizeServerError(finalizeData.error));
+          setBusy(false);
+          return;
+        }
+      } catch {
+        showError("Couldn't finish setting up your trial. Refresh and sign in to continue.");
         setBusy(false);
         return;
       }
