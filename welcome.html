@@ -291,10 +291,32 @@
     <p style="margin-bottom:0">Nothing on this site or produced by the ClaudeView software constitutes financial, investment, tax, or legal advice. Trading involves substantial risk of loss. See our <a href="/terms.html" style="color:#7b81a8;text-decoration:underline">Terms</a> and <a href="/privacy.html" style="color:#7b81a8;text-decoration:underline">Privacy Policy</a>.</p>
   </div>
 
+  <script src="/config.js"></script>
   <script>
     const GITHUB_OWNER = 'thecryptichacker';
     const GITHUB_REPO = 'claudeview-releases';
     const LATEST_API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/releases/latest`;
+
+    // 3DS-redirect path: Stripe sent the user here with ?payment_intent=...
+    // after a 3D Secure challenge, which means signup.html's finalize-signup
+    // call never ran. The payment_intent.succeeded webhook is the real
+    // fallback, but calling finalize-signup here too closes the user-visible
+    // latency gap (otherwise the desktop app may show "no subscription" for
+    // a few seconds while the webhook propagates).
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const pi = params.get('payment_intent');
+      if (!pi || !window.APP_CONFIG?.backendUrl) return;
+      try {
+        await fetch(`${window.APP_CONFIG.backendUrl}/v1/auth/finalize-signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payment_intent_id: pi }),
+        });
+      } catch {
+        // Webhook fallback will still finalize server-side — no user-visible failure.
+      }
+    })();
 
     // Detect the user's platform from the User-Agent. macOS Apple Silicon and
     // Intel both ship under the same universal .dmg.
