@@ -266,7 +266,7 @@
         <div class="step">
           <div class="step-num">2</div>
           <div class="step-text">
-            <strong>Sign in with the email and password you just created.</strong> The app will detect your active trial automatically — no second checkout.
+            <strong>Sign in with the email and password you just created.</strong> The app will detect your active trial automatically - no second checkout.
           </div>
         </div>
         <div class="step">
@@ -314,7 +314,7 @@
           body: JSON.stringify({ payment_intent_id: pi }),
         });
       } catch {
-        // Webhook fallback will still finalize server-side — no user-visible failure.
+        // Webhook fallback will still finalize server-side - no user-visible failure.
       }
     })();
 
@@ -383,7 +383,7 @@
         dlBtn.classList.add('disabled');
         dlBtn.setAttribute('aria-disabled', 'true');
         dlLabel.textContent = 'Unavailable';
-        dlMeta.textContent = '—';
+        dlMeta.textContent = '-';
         return;
       }
       applyPlatform(currentPlatform, { autoDownload: true });
@@ -419,7 +419,7 @@
 
       // Trigger automatic download once per platform selection. Browsers
       // require this to originate from a script triggered by navigation,
-      // not a user gesture — we use a hidden anchor click.
+      // not a user gesture - we use a hidden anchor click.
       if (opts.autoDownload && autoDownloadedFor !== platform) {
         autoDownloadedFor = platform;
         const a = document.createElement('a');

@@ -310,7 +310,7 @@
       <div id="alert" class="alert alert-error" style="display:none"></div>
       <div id="success" class="alert alert-success" style="display:none"></div>
 
-      <!-- Download (active subscribers only — hidden by default, revealed by JS) -->
+      <!-- Download (active subscribers only - hidden by default, revealed by JS) -->
       <div class="card" id="download-card" style="display:none">
         <div class="card-title">Download the app</div>
         <div class="platform-tabs" id="dl-platform-tabs">
@@ -335,11 +335,11 @@
         <div class="status-row">
           <div class="status-block">
             <span class="status-label">Plan</span>
-            <span class="status-value" id="plan-name">—</span>
+            <span class="status-value" id="plan-name">-</span>
             <span class="status-label" id="renewal-label" style="margin-top:8px"></span>
           </div>
           <div class="status-block" style="align-items:flex-end">
-            <span class="status-pill none" id="status-pill"><span class="pulse"></span><span id="status-text">—</span></span>
+            <span class="status-pill none" id="status-pill"><span class="pulse"></span><span id="status-text">-</span></span>
           </div>
         </div>
 
@@ -544,7 +544,7 @@
       switchBtn.disabled = !hasBilling;
 
       // Download card: only visible to active subscribers (trialing/active/past_due).
-      // Trust the backend's is_subscribed flag — it's computed from the same
+      // Trust the backend's is_subscribed flag - it's computed from the same
       // status set used for entitlements elsewhere.
       const downloadCard = document.getElementById('download-card');
       if (me.is_subscribed === true) {
@@ -659,7 +659,7 @@
           btn.classList.add('disabled');
           btn.setAttribute('aria-disabled', 'true');
           label.textContent = 'Unavailable';
-          document.getElementById('dl-meta').textContent = '—';
+          document.getElementById('dl-meta').textContent = '-';
           setDlStatus("Couldn't fetch the latest release. Refresh to try again.", 'warn');
         } finally {
           releaseLoading = null;
@@ -672,7 +672,7 @@
       tab.addEventListener('click', () => applyDlPlatform(tab.dataset.platform));
     });
 
-    // Block clicks on the download button if entitlement is missing — defense
+    // Block clicks on the download button if entitlement is missing - defense
     // in depth in case a stale DOM state slips through.
     document.getElementById('download-btn').addEventListener('click', (e) => {
       if (!currentMe || currentMe.is_subscribed !== true) {

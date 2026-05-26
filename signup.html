@@ -470,7 +470,7 @@
     const params = new URLSearchParams(window.location.search);
     if (params.get('plan') === 'annual') selectedPlan = 'annual';
 
-    // Plan pricing — kept in sync with the backend Stripe prices for display only.
+    // Plan pricing - kept in sync with the backend Stripe prices for display only.
     const PLAN_PRICING = {
       monthly: { label: 'Monthly plan', price: 29, original: 49, suffix: '/mo after trial' },
       annual:  { label: 'Annual plan',  price: 235.20, original: 588, suffix: '/yr after trial' },
@@ -560,7 +560,7 @@
             amount_off: data.amount_off || null,
           };
           const off = data.percent_off ? `${data.percent_off}% off` : `$${(data.amount_off / 100).toFixed(2)} off`;
-          setPromoStatus('ok', `Promo "${code}" applied — ${off} after trial.`);
+          setPromoStatus('ok', `Promo "${code}" applied - ${off} after trial.`);
         }
       } catch {
         appliedPromo = null;
@@ -655,7 +655,7 @@
 
     // ===== Stripe setup =====
     // Deferred-intent payment: Payment Element mounts immediately, a $1
-    // PaymentIntent is created on submit (server). The $1 actually charges —
+    // PaymentIntent is created on submit (server). The $1 actually charges -
     // it's the trust gate against prepaid / virtual / zero-balance cards that
     // would otherwise pass a SetupIntent. /v1/auth/finalize-signup refunds it
     // immediately after creating the subscription.
@@ -751,7 +751,7 @@
         return;
       }
 
-      // Step 3: Confirm the $1 PaymentIntent. This is the trust gate — prepaid
+      // Step 3: Confirm the $1 PaymentIntent. This is the trust gate - prepaid
       // / virtual / zero-balance cards that pass SetupIntent fail here.
       const { error: confirmError } = await stripe.confirmPayment({
         elements,
@@ -768,7 +768,7 @@
         return;
       }
 
-      // Step 4: Finalize — server creates the subscription and refunds the $1.
+      // Step 4: Finalize - server creates the subscription and refunds the $1.
       // If this call fails (e.g. user offline), the payment_intent.succeeded
       // webhook is a fallback that completes the same work server-side.
       try {
